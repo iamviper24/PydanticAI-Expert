@@ -1,0 +1,449 @@
+PydanticAI
+pydantic/pydantic-ai
+Introduction
+Installation
+Getting Help
+Contributing
+Troubleshooting
+Upgrade Guide
+Documentation
+Documentation
+Agents
+Models
+Models
+OpenAI
+Anthropic
+Gemini
+Google
+Bedrock
+Cohere
+Groq
+Mistral
+Dependencies
+Function Tools
+Common Tools
+Output
+Messages and chat history
+Unit testing
+Debugging and Monitoring
+Multi-agent Applications
+Graphs
+Evals
+Image, Audio, Video & Document Input
+Thinking
+Direct Model Requests
+MCP
+MCP
+Client
+Server
+MCP Run Python
+A2A
+Command Line Interface (CLI)
+Examples
+Examples
+Pydantic Model
+Weather agent
+Bank support
+SQL Generation
+Flight booking
+RAG
+Stream markdown
+Stream markdown
+Table of contents
+Running the Example
+Example Code
+Stream whales
+Chat App with FastAPI
+Question Graph
+Slack Lead Qualifier with Modal
+API Reference
+API Reference
+pydantic_ai.agent
+pydantic_ai.tools
+pydantic_ai.common_tools
+pydantic_ai.output
+pydantic_ai.result
+pydantic_ai.messages
+pydantic_ai.exceptions
+pydantic_ai.settings
+pydantic_ai.usage
+pydantic_ai.mcp
+pydantic_ai.format_as_xml
+pydantic_ai.format_prompt
+pydantic_ai.direct
+pydantic_ai.models
+pydantic_ai.models.openai
+pydantic_ai.models.anthropic
+pydantic_ai.models.bedrock
+pydantic_ai.models.cohere
+pydantic_ai.models.gemini
+pydantic_ai.models.google
+pydantic_ai.models.groq
+pydantic_ai.models.instrumented
+pydantic_ai.models.mistral
+pydantic_ai.models.test
+pydantic_ai.models.function
+pydantic_ai.models.fallback
+pydantic_ai.models.wrapper
+pydantic_ai.models.mcp_sampling
+pydantic_ai.profiles
+pydantic_ai.providers
+pydantic_graph
+pydantic_graph.nodes
+pydantic_graph.persistence
+pydantic_graph.mermaid
+pydantic_graph.exceptions
+pydantic_evals.dataset
+pydantic_evals.evaluators
+pydantic_evals.reporting
+pydantic_evals.otel
+pydantic_evals.generation
+fasta2a
+Table of contents
+Running the Example
+Example Code
+Stream markdown
+This example shows how to stream markdown from an agent, using the
+rich
+library to highlight the output in the terminal.
+It'll run the example with both OpenAI and Google Gemini models if the required environment variables are set.
+Demonstrates:
+streaming text responses
+Running the Example
+With
+dependencies installed and environment variables set
+, run:
+pip
+uv
+python
+-m
+pydantic_ai_examples.stream_markdown
+uv
+run
+-m
+pydantic_ai_examples.stream_markdown
+Example Code
+stream_markdown.py
+"""This example shows how to stream markdown from an agent, using the `rich` library to display the markdown.
+Run with:
+uv run -m pydantic_ai_examples.stream_markdown
+"""
+import
+asyncio
+import
+os
+import
+logfire
+from
+rich.console
+import
+Console
+,
+ConsoleOptions
+,
+RenderResult
+from
+rich.live
+import
+Live
+from
+rich.markdown
+import
+CodeBlock
+,
+Markdown
+from
+rich.syntax
+import
+Syntax
+from
+rich.text
+import
+Text
+from
+pydantic_ai
+import
+Agent
+from
+pydantic_ai.models
+import
+KnownModelName
+# 'if-token-present' means nothing will be sent (and the example will work) if you don't have logfire configured
+logfire
+.
+configure
+(
+send_to_logfire
+=
+'if-token-present'
+)
+logfire
+.
+instrument_pydantic_ai
+()
+agent
+=
+Agent
+()
+# models to try, and the appropriate env var
+models
+:
+list
+[
+tuple
+[
+KnownModelName
+,
+str
+]]
+=
+[
+(
+'google-gla:gemini-1.5-flash'
+,
+'GEMINI_API_KEY'
+),
+(
+'openai:gpt-4o-mini'
+,
+'OPENAI_API_KEY'
+),
+(
+'groq:llama-3.3-70b-versatile'
+,
+'GROQ_API_KEY'
+),
+]
+async
+def
+main
+():
+prettier_code_blocks
+()
+console
+=
+Console
+()
+prompt
+=
+'Show me a short example of using Pydantic.'
+console
+.
+log
+(
+f
+'Asking:
+{
+prompt
+}
+...'
+,
+style
+=
+'cyan'
+)
+for
+model
+,
+env_var
+in
+models
+:
+if
+env_var
+in
+os
+.
+environ
+:
+console
+.
+log
+(
+f
+'Using model:
+{
+model
+}
+'
+)
+with
+Live
+(
+''
+,
+console
+=
+console
+,
+vertical_overflow
+=
+'visible'
+)
+as
+live
+:
+async
+with
+agent
+.
+run_stream
+(
+prompt
+,
+model
+=
+model
+)
+as
+result
+:
+async
+for
+message
+in
+result
+.
+stream
+():
+live
+.
+update
+(
+Markdown
+(
+message
+))
+console
+.
+log
+(
+result
+.
+usage
+())
+else
+:
+console
+.
+log
+(
+f
+'
+{
+model
+}
+requires
+{
+env_var
+}
+to be set.'
+)
+def
+prettier_code_blocks
+():
+"""Make rich code blocks prettier and easier to copy.
+From https://github.com/samuelcolvin/aicli/blob/v0.8.0/samuelcolvin_aicli.py#L22
+"""
+class
+SimpleCodeBlock
+(
+CodeBlock
+):
+def
+__rich_console__
+(
+self
+,
+console
+:
+Console
+,
+options
+:
+ConsoleOptions
+)
+->
+RenderResult
+:
+code
+=
+str
+(
+self
+.
+text
+)
+.
+rstrip
+()
+yield
+Text
+(
+self
+.
+lexer_name
+,
+style
+=
+'dim'
+)
+yield
+Syntax
+(
+code
+,
+self
+.
+lexer_name
+,
+theme
+=
+self
+.
+theme
+,
+background_color
+=
+'default'
+,
+word_wrap
+=
+True
+,
+)
+yield
+Text
+(
+f
+'/
+{
+self
+.
+lexer_name
+}
+'
+,
+style
+=
+'dim'
+)
+Markdown
+.
+elements
+[
+'fence'
+]
+=
+SimpleCodeBlock
+if
+__name__
+==
+'__main__'
+:
+asyncio
+.
+run
+(
+main
+())

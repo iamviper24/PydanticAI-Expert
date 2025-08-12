@@ -1,0 +1,665 @@
+PydanticAI
+pydantic/pydantic-ai
+Introduction
+Installation
+Getting Help
+Contributing
+Troubleshooting
+Upgrade Guide
+Documentation
+Documentation
+Agents
+Models
+Models
+OpenAI
+Anthropic
+Gemini
+Google
+Google
+Table of contents
+Install
+Configuration
+API Key (Generative Language API)
+Vertex AI (Enterprise/Cloud)
+Application Default Credentials
+Service Account
+Customizing Location
+Provider Argument
+Model Settings
+Document, Image, Audio, and Video Input
+Model settings
+Disable thinking
+Safety settings
+Bedrock
+Cohere
+Groq
+Mistral
+Dependencies
+Function Tools
+Common Tools
+Output
+Messages and chat history
+Unit testing
+Debugging and Monitoring
+Multi-agent Applications
+Graphs
+Evals
+Image, Audio, Video & Document Input
+Thinking
+Direct Model Requests
+MCP
+MCP
+Client
+Server
+MCP Run Python
+A2A
+Command Line Interface (CLI)
+Examples
+Examples
+Pydantic Model
+Weather agent
+Bank support
+SQL Generation
+Flight booking
+RAG
+Stream markdown
+Stream whales
+Chat App with FastAPI
+Question Graph
+Slack Lead Qualifier with Modal
+API Reference
+API Reference
+pydantic_ai.agent
+pydantic_ai.tools
+pydantic_ai.common_tools
+pydantic_ai.output
+pydantic_ai.result
+pydantic_ai.messages
+pydantic_ai.exceptions
+pydantic_ai.settings
+pydantic_ai.usage
+pydantic_ai.mcp
+pydantic_ai.format_as_xml
+pydantic_ai.format_prompt
+pydantic_ai.direct
+pydantic_ai.models
+pydantic_ai.models.openai
+pydantic_ai.models.anthropic
+pydantic_ai.models.bedrock
+pydantic_ai.models.cohere
+pydantic_ai.models.gemini
+pydantic_ai.models.google
+pydantic_ai.models.groq
+pydantic_ai.models.instrumented
+pydantic_ai.models.mistral
+pydantic_ai.models.test
+pydantic_ai.models.function
+pydantic_ai.models.fallback
+pydantic_ai.models.wrapper
+pydantic_ai.models.mcp_sampling
+pydantic_ai.profiles
+pydantic_ai.providers
+pydantic_graph
+pydantic_graph.nodes
+pydantic_graph.persistence
+pydantic_graph.mermaid
+pydantic_graph.exceptions
+pydantic_evals.dataset
+pydantic_evals.evaluators
+pydantic_evals.reporting
+pydantic_evals.otel
+pydantic_evals.generation
+fasta2a
+Table of contents
+Install
+Configuration
+API Key (Generative Language API)
+Vertex AI (Enterprise/Cloud)
+Application Default Credentials
+Service Account
+Customizing Location
+Provider Argument
+Model Settings
+Document, Image, Audio, and Video Input
+Model settings
+Disable thinking
+Safety settings
+Google
+The
+GoogleModel
+is a model that uses the
+google-genai
+package under the hood to
+access Google's Gemini models via both the Generative Language API and Vertex AI.
+Install
+To use
+GoogleModel
+, you need to either install
+pydantic-ai
+, or install
+pydantic-ai-slim
+with the
+google
+optional group:
+pip
+uv
+pip
+install
+"pydantic-ai-slim[google]"
+uv
+add
+"pydantic-ai-slim[google]"
+Explicit instantiation required
+You
+cannot
+currently use
+Agent('google-gla:gemini-1.5-flash')
+or
+Agent('google-vertex:gemini-1.5-flash')
+directly with
+GoogleModel
+. The model name inference will select
+GeminiModel
+instead of
+GoogleModel
+.
+To use
+GoogleModel
+, you
+must
+explicitly instantiate a
+GoogleProvider
+and pass it to
+GoogleModel
+, then pass the model to
+Agent
+.
+Configuration
+GoogleModel
+lets you use Google's Gemini models through their
+Generative Language API
+(
+generativelanguage.googleapis.com
+) or
+Vertex AI API
+(
+*-aiplatform.googleapis.com
+).
+API Key (Generative Language API)
+To use Gemini via the Generative Language API, go to
+aistudio.google.com
+and create an API key.
+Once you have the API key, set it as an environment variable:
+export
+GOOGLE_API_KEY
+=
+your-api-key
+You can then use
+GoogleModel
+by explicitly creating a provider:
+from
+pydantic_ai
+import
+Agent
+from
+pydantic_ai.models.google
+import
+GoogleModel
+from
+pydantic_ai.providers.google
+import
+GoogleProvider
+provider
+=
+GoogleProvider
+(
+api_key
+=
+'your-api-key'
+)
+model
+=
+GoogleModel
+(
+'gemini-1.5-flash'
+,
+provider
+=
+provider
+)
+agent
+=
+Agent
+(
+model
+)
+...
+Vertex AI (Enterprise/Cloud)
+If you are an enterprise user, you can use the
+google-vertex
+provider with
+GoogleModel
+to access Gemini via Vertex AI.
+To use Vertex AI, you may need to set up
+application default credentials
+or use a service account. You can also specify the region.
+Application Default Credentials
+If you have the
+gcloud
+CLI
+installed and configured, you can use:
+from
+pydantic_ai
+import
+Agent
+from
+pydantic_ai.models.google
+import
+GoogleModel
+from
+pydantic_ai.providers.google
+import
+GoogleProvider
+provider
+=
+GoogleProvider
+(
+vertexai
+=
+True
+)
+model
+=
+GoogleModel
+(
+'gemini-1.5-flash'
+,
+provider
+=
+provider
+)
+agent
+=
+Agent
+(
+model
+)
+...
+Service Account
+To use a service account JSON file:
+google_model_service_account.py
+from
+google.oauth2
+import
+service_account
+from
+pydantic_ai
+import
+Agent
+from
+pydantic_ai.models.google
+import
+GoogleModel
+from
+pydantic_ai.providers.google
+import
+GoogleProvider
+credentials
+=
+service_account
+.
+Credentials
+.
+from_service_account_file
+(
+'path/to/service-account.json'
+,
+scopes
+=
+[
+'https://www.googleapis.com/auth/cloud-platform'
+],
+)
+provider
+=
+GoogleProvider
+(
+credentials
+=
+credentials
+)
+model
+=
+GoogleModel
+(
+'gemini-1.5-flash'
+,
+provider
+=
+provider
+)
+agent
+=
+Agent
+(
+model
+)
+...
+Customizing Location
+You can specify the location when using Vertex AI:
+google_model_location.py
+from
+pydantic_ai
+import
+Agent
+from
+pydantic_ai.models.google
+import
+GoogleModel
+from
+pydantic_ai.providers.google
+import
+GoogleProvider
+provider
+=
+GoogleProvider
+(
+vertexai
+=
+True
+,
+location
+=
+'asia-east1'
+)
+model
+=
+GoogleModel
+(
+'gemini-1.5-flash'
+,
+provider
+=
+provider
+)
+agent
+=
+Agent
+(
+model
+)
+...
+Provider Argument
+You can supply a custom
+GoogleProvider
+instance using the
+provider
+argument to configure advanced client options, such as setting a custom
+base_url
+.
+This is useful if you're using a custom-compatible endpoint with the Google Generative Language API.
+from
+google
+import
+genai
+from
+google.genai.types
+import
+HttpOptions
+from
+pydantic_ai
+import
+Agent
+from
+pydantic_ai.models.google
+import
+GoogleModel
+from
+pydantic_ai.providers.google
+import
+GoogleProvider
+client
+=
+genai
+.
+Client
+(
+api_key
+=
+'gemini-custom-api-key'
+,
+http_options
+=
+HttpOptions
+(
+base_url
+=
+'gemini-custom-base-url'
+),
+)
+provider
+=
+GoogleProvider
+(
+client
+=
+client
+)
+model
+=
+GoogleModel
+(
+'gemini-1.5-flash'
+,
+provider
+=
+provider
+)
+agent
+=
+Agent
+(
+model
+)
+...
+Model Settings
+You can customize model behavior using
+GoogleModelSettings
+:
+from
+google.genai.types
+import
+HarmBlockThreshold
+,
+HarmCategory
+from
+pydantic_ai
+import
+Agent
+from
+pydantic_ai.models.google
+import
+GoogleModel
+,
+GoogleModelSettings
+settings
+=
+GoogleModelSettings
+(
+temperature
+=
+0.2
+,
+max_tokens
+=
+1024
+,
+google_thinking_config
+=
+{
+'thinking_budget'
+:
+2048
+},
+google_safety_settings
+=
+[
+{
+'category'
+:
+HarmCategory
+.
+HARM_CATEGORY_HATE_SPEECH
+,
+'threshold'
+:
+HarmBlockThreshold
+.
+BLOCK_LOW_AND_ABOVE
+,
+}
+]
+)
+model
+=
+GoogleModel
+(
+'gemini-1.5-flash'
+)
+agent
+=
+Agent
+(
+model
+,
+model_settings
+=
+settings
+)
+...
+See the
+Gemini API docs
+for more on safety settings, and
+thinking config
+.
+Document, Image, Audio, and Video Input
+GoogleModel
+supports multi-modal input, including documents, images, audio, and video. See the
+input documentation
+for details and examples.
+Model settings
+You can use the
+GoogleModelSettings
+class to customize the model request.
+Disable thinking
+You can disable thinking by setting the
+thinking_budget
+to
+0
+on the
+google_thinking_config
+:
+from
+pydantic_ai
+import
+Agent
+from
+pydantic_ai.models.google
+import
+GoogleModel
+,
+GoogleModelSettings
+model_settings
+=
+GoogleModelSettings
+(
+google_thinking_config
+=
+{
+'thinking_budget'
+:
+0
+})
+model
+=
+GoogleModel
+(
+'gemini-2.0-flash'
+)
+agent
+=
+Agent
+(
+model
+,
+model_settings
+=
+model_settings
+)
+...
+Check out the
+Gemini API docs
+for more on thinking.
+Safety settings
+You can customize the safety settings by setting the
+google_safety_settings
+field.
+from
+google.genai.types
+import
+HarmBlockThreshold
+,
+HarmCategory
+from
+pydantic_ai
+import
+Agent
+from
+pydantic_ai.models.google
+import
+GoogleModel
+,
+GoogleModelSettings
+model_settings
+=
+GoogleModelSettings
+(
+google_safety_settings
+=
+[
+{
+'category'
+:
+HarmCategory
+.
+HARM_CATEGORY_HATE_SPEECH
+,
+'threshold'
+:
+HarmBlockThreshold
+.
+BLOCK_LOW_AND_ABOVE
+,
+}
+]
+)
+model
+=
+GoogleModel
+(
+'gemini-2.0-flash'
+)
+agent
+=
+Agent
+(
+model
+,
+model_settings
+=
+model_settings
+)
+...
+See the
+Gemini API docs
+for more on safety settings.

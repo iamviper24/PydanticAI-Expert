@@ -1,0 +1,240 @@
+PydanticAI
+pydantic/pydantic-ai
+Introduction
+Installation
+Getting Help
+Contributing
+Troubleshooting
+Upgrade Guide
+Documentation
+Documentation
+Agents
+Models
+Models
+OpenAI
+Anthropic
+Gemini
+Google
+Bedrock
+Cohere
+Groq
+Mistral
+Dependencies
+Function Tools
+Common Tools
+Output
+Messages and chat history
+Unit testing
+Debugging and Monitoring
+Multi-agent Applications
+Graphs
+Evals
+Image, Audio, Video & Document Input
+Thinking
+Direct Model Requests
+MCP
+MCP
+Client
+Server
+MCP Run Python
+A2A
+Command Line Interface (CLI)
+Examples
+Examples
+Pydantic Model
+Pydantic Model
+Table of contents
+Running the Example
+Example Code
+Weather agent
+Bank support
+SQL Generation
+Flight booking
+RAG
+Stream markdown
+Stream whales
+Chat App with FastAPI
+Question Graph
+Slack Lead Qualifier with Modal
+API Reference
+API Reference
+pydantic_ai.agent
+pydantic_ai.tools
+pydantic_ai.common_tools
+pydantic_ai.output
+pydantic_ai.result
+pydantic_ai.messages
+pydantic_ai.exceptions
+pydantic_ai.settings
+pydantic_ai.usage
+pydantic_ai.mcp
+pydantic_ai.format_as_xml
+pydantic_ai.format_prompt
+pydantic_ai.direct
+pydantic_ai.models
+pydantic_ai.models.openai
+pydantic_ai.models.anthropic
+pydantic_ai.models.bedrock
+pydantic_ai.models.cohere
+pydantic_ai.models.gemini
+pydantic_ai.models.google
+pydantic_ai.models.groq
+pydantic_ai.models.instrumented
+pydantic_ai.models.mistral
+pydantic_ai.models.test
+pydantic_ai.models.function
+pydantic_ai.models.fallback
+pydantic_ai.models.wrapper
+pydantic_ai.models.mcp_sampling
+pydantic_ai.profiles
+pydantic_ai.providers
+pydantic_graph
+pydantic_graph.nodes
+pydantic_graph.persistence
+pydantic_graph.mermaid
+pydantic_graph.exceptions
+pydantic_evals.dataset
+pydantic_evals.evaluators
+pydantic_evals.reporting
+pydantic_evals.otel
+pydantic_evals.generation
+fasta2a
+Table of contents
+Running the Example
+Example Code
+Pydantic Model
+Simple example of using PydanticAI to construct a Pydantic model from a text input.
+Demonstrates:
+structured
+output_type
+Running the Example
+With
+dependencies installed and environment variables set
+, run:
+pip
+uv
+python
+-m
+pydantic_ai_examples.pydantic_model
+uv
+run
+-m
+pydantic_ai_examples.pydantic_model
+This examples uses
+openai:gpt-4o
+by default, but it works well with other models, e.g. you can run it
+with Gemini using:
+pip
+uv
+PYDANTIC_AI_MODEL
+=
+gemini-1.5-pro
+python
+-m
+pydantic_ai_examples.pydantic_model
+PYDANTIC_AI_MODEL
+=
+gemini-1.5-pro
+uv
+run
+-m
+pydantic_ai_examples.pydantic_model
+(or
+PYDANTIC_AI_MODEL=gemini-1.5-flash ...
+)
+Example Code
+pydantic_model.py
+"""Simple example of using PydanticAI to construct a Pydantic model from a text input.
+Run with:
+uv run -m pydantic_ai_examples.pydantic_model
+"""
+import
+os
+import
+logfire
+from
+pydantic
+import
+BaseModel
+from
+pydantic_ai
+import
+Agent
+# 'if-token-present' means nothing will be sent (and the example will work) if you don't have logfire configured
+logfire
+.
+configure
+(
+send_to_logfire
+=
+'if-token-present'
+)
+logfire
+.
+instrument_pydantic_ai
+()
+class
+MyModel
+(
+BaseModel
+):
+city
+:
+str
+country
+:
+str
+model
+=
+os
+.
+getenv
+(
+'PYDANTIC_AI_MODEL'
+,
+'openai:gpt-4o'
+)
+print
+(
+f
+'Using model:
+{
+model
+}
+'
+)
+agent
+=
+Agent
+(
+model
+,
+output_type
+=
+MyModel
+)
+if
+__name__
+==
+'__main__'
+:
+result
+=
+agent
+.
+run_sync
+(
+'The windy city in the US of A.'
+)
+print
+(
+result
+.
+output
+)
+print
+(
+result
+.
+usage
+())

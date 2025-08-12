@@ -1,0 +1,669 @@
+PydanticAI
+pydantic/pydantic-ai
+Introduction
+Installation
+Getting Help
+Contributing
+Troubleshooting
+Upgrade Guide
+Documentation
+Documentation
+Agents
+Models
+Models
+OpenAI
+Anthropic
+Gemini
+Google
+Bedrock
+Cohere
+Groq
+Mistral
+Dependencies
+Function Tools
+Common Tools
+Output
+Messages and chat history
+Unit testing
+Debugging and Monitoring
+Multi-agent Applications
+Graphs
+Evals
+Image, Audio, Video & Document Input
+Thinking
+Direct Model Requests
+MCP
+MCP
+Client
+Server
+MCP Run Python
+A2A
+Command Line Interface (CLI)
+Examples
+Examples
+Pydantic Model
+Weather agent
+Bank support
+SQL Generation
+Flight booking
+RAG
+Stream markdown
+Stream whales
+Chat App with FastAPI
+Question Graph
+Slack Lead Qualifier with Modal
+API Reference
+API Reference
+pydantic_ai.agent
+pydantic_ai.tools
+pydantic_ai.common_tools
+pydantic_ai.output
+pydantic_ai.result
+pydantic_ai.messages
+pydantic_ai.exceptions
+pydantic_ai.exceptions
+Table of contents
+exceptions
+ModelRetry
+message
+UserError
+message
+AgentRunError
+message
+UsageLimitExceeded
+UnexpectedModelBehavior
+message
+body
+ModelHTTPError
+message
+status_code
+model_name
+body
+FallbackExceptionGroup
+pydantic_ai.settings
+pydantic_ai.usage
+pydantic_ai.mcp
+pydantic_ai.format_as_xml
+pydantic_ai.format_prompt
+pydantic_ai.direct
+pydantic_ai.models
+pydantic_ai.models.openai
+pydantic_ai.models.anthropic
+pydantic_ai.models.bedrock
+pydantic_ai.models.cohere
+pydantic_ai.models.gemini
+pydantic_ai.models.google
+pydantic_ai.models.groq
+pydantic_ai.models.instrumented
+pydantic_ai.models.mistral
+pydantic_ai.models.test
+pydantic_ai.models.function
+pydantic_ai.models.fallback
+pydantic_ai.models.wrapper
+pydantic_ai.models.mcp_sampling
+pydantic_ai.profiles
+pydantic_ai.providers
+pydantic_graph
+pydantic_graph.nodes
+pydantic_graph.persistence
+pydantic_graph.mermaid
+pydantic_graph.exceptions
+pydantic_evals.dataset
+pydantic_evals.evaluators
+pydantic_evals.reporting
+pydantic_evals.otel
+pydantic_evals.generation
+fasta2a
+Table of contents
+exceptions
+ModelRetry
+message
+UserError
+message
+AgentRunError
+message
+UsageLimitExceeded
+UnexpectedModelBehavior
+message
+body
+ModelHTTPError
+message
+status_code
+model_name
+body
+FallbackExceptionGroup
+pydantic_ai.exceptions
+ModelRetry
+Bases:
+Exception
+Exception raised when a tool function should be retried.
+The agent will return the message to the model and ask it to try calling the function/tool again.
+Source code in
+pydantic_ai_slim/pydantic_ai/exceptions.py
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+class
+ModelRetry
+(
+Exception
+):
+"""Exception raised when a tool function should be retried.
+The agent will return the message to the model and ask it to try calling the function/tool again.
+"""
+message
+:
+str
+"""The message to return to the model."""
+def
+__init__
+(
+self
+,
+message
+:
+str
+):
+self
+.
+message
+=
+message
+super
+()
+.
+__init__
+(
+message
+)
+message
+instance-attribute
+message
+:
+str
+=
+message
+The message to return to the model.
+UserError
+Bases:
+RuntimeError
+Error caused by a usage mistake by the application developer — You!
+Source code in
+pydantic_ai_slim/pydantic_ai/exceptions.py
+36
+37
+38
+39
+40
+41
+42
+43
+44
+class
+UserError
+(
+RuntimeError
+):
+"""Error caused by a usage mistake by the application developer — You!"""
+message
+:
+str
+"""Description of the mistake."""
+def
+__init__
+(
+self
+,
+message
+:
+str
+):
+self
+.
+message
+=
+message
+super
+()
+.
+__init__
+(
+message
+)
+message
+instance-attribute
+message
+:
+str
+=
+message
+Description of the mistake.
+AgentRunError
+Bases:
+RuntimeError
+Base class for errors occurring during an agent run.
+Source code in
+pydantic_ai_slim/pydantic_ai/exceptions.py
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+class
+AgentRunError
+(
+RuntimeError
+):
+"""Base class for errors occurring during an agent run."""
+message
+:
+str
+"""The error message."""
+def
+__init__
+(
+self
+,
+message
+:
+str
+):
+self
+.
+message
+=
+message
+super
+()
+.
+__init__
+(
+message
+)
+def
+__str__
+(
+self
+)
+->
+str
+:
+return
+self
+.
+message
+message
+instance-attribute
+message
+:
+str
+=
+message
+The error message.
+UsageLimitExceeded
+Bases:
+AgentRunError
+Error raised when a Model's usage exceeds the specified limits.
+Source code in
+pydantic_ai_slim/pydantic_ai/exceptions.py
+61
+62
+class
+UsageLimitExceeded
+(
+AgentRunError
+):
+"""Error raised when a Model's usage exceeds the specified limits."""
+UnexpectedModelBehavior
+Bases:
+AgentRunError
+Error caused by unexpected Model behavior, e.g. an unexpected response code.
+Source code in
+pydantic_ai_slim/pydantic_ai/exceptions.py
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+class
+UnexpectedModelBehavior
+(
+AgentRunError
+):
+"""Error caused by unexpected Model behavior, e.g. an unexpected response code."""
+message
+:
+str
+"""Description of the unexpected behavior."""
+body
+:
+str
+|
+None
+"""The body of the response, if available."""
+def
+__init__
+(
+self
+,
+message
+:
+str
+,
+body
+:
+str
+|
+None
+=
+None
+):
+self
+.
+message
+=
+message
+if
+body
+is
+None
+:
+self
+.
+body
+:
+str
+|
+None
+=
+None
+else
+:
+try
+:
+self
+.
+body
+=
+json
+.
+dumps
+(
+json
+.
+loads
+(
+body
+),
+indent
+=
+2
+)
+except
+ValueError
+:
+self
+.
+body
+=
+body
+super
+()
+.
+__init__
+(
+message
+)
+def
+__str__
+(
+self
+)
+->
+str
+:
+if
+self
+.
+body
+:
+return
+f
+'
+{
+self
+.
+message
+}
+, body:
+\n
+{
+self
+.
+body
+}
+'
+else
+:
+return
+self
+.
+message
+message
+instance-attribute
+message
+:
+str
+=
+message
+Description of the unexpected behavior.
+body
+instance-attribute
+body
+:
+str
+|
+None
+=
+dumps
+(
+loads
+(
+body
+),
+indent
+=
+2
+)
+The body of the response, if available.
+ModelHTTPError
+Bases:
+AgentRunError
+Raised when an model provider response has a status code of 4xx or 5xx.
+Source code in
+pydantic_ai_slim/pydantic_ai/exceptions.py
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+class
+ModelHTTPError
+(
+AgentRunError
+):
+"""Raised when an model provider response has a status code of 4xx or 5xx."""
+status_code
+:
+int
+"""The HTTP status code returned by the API."""
+model_name
+:
+str
+"""The name of the model associated with the error."""
+body
+:
+object
+|
+None
+"""The body of the response, if available."""
+message
+:
+str
+"""The error message with the status code and response body, if available."""
+def
+__init__
+(
+self
+,
+status_code
+:
+int
+,
+model_name
+:
+str
+,
+body
+:
+object
+|
+None
+=
+None
+):
+self
+.
+status_code
+=
+status_code
+self
+.
+model_name
+=
+model_name
+self
+.
+body
+=
+body
+message
+=
+f
+'status_code:
+{
+status_code
+}
+, model_name:
+{
+model_name
+}
+, body:
+{
+body
+}
+'
+super
+()
+.
+__init__
+(
+message
+)
+message
+instance-attribute
+message
+:
+str
+The error message with the status code and response body, if available.
+status_code
+instance-attribute
+status_code
+:
+int
+=
+status_code
+The HTTP status code returned by the API.
+model_name
+instance-attribute
+model_name
+:
+str
+=
+model_name
+The name of the model associated with the error.
+body
+instance-attribute
+body
+:
+object
+|
+None
+=
+body
+The body of the response, if available.
+FallbackExceptionGroup
+Bases:
+ExceptionGroup
+A group of exceptions that can be raised when all fallback models fail.
+Source code in
+pydantic_ai_slim/pydantic_ai/exceptions.py
+114
+115
+class
+FallbackExceptionGroup
+(
+ExceptionGroup
+):
+"""A group of exceptions that can be raised when all fallback models fail."""

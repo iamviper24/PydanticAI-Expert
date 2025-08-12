@@ -1,0 +1,265 @@
+PydanticAI
+pydantic/pydantic-ai
+Introduction
+Installation
+Getting Help
+Contributing
+Troubleshooting
+Upgrade Guide
+Documentation
+Documentation
+Agents
+Models
+Models
+OpenAI
+Anthropic
+Gemini
+Google
+Bedrock
+Cohere
+Groq
+Mistral
+Dependencies
+Function Tools
+Common Tools
+Output
+Messages and chat history
+Unit testing
+Debugging and Monitoring
+Multi-agent Applications
+Graphs
+Evals
+Image, Audio, Video & Document Input
+Thinking
+Direct Model Requests
+MCP
+MCP
+Client
+Server
+MCP Run Python
+A2A
+Command Line Interface (CLI)
+Command Line Interface (CLI)
+Table of contents
+Usage
+Help
+Choose a model
+Custom Agents
+Examples
+Examples
+Pydantic Model
+Weather agent
+Bank support
+SQL Generation
+Flight booking
+RAG
+Stream markdown
+Stream whales
+Chat App with FastAPI
+Question Graph
+Slack Lead Qualifier with Modal
+API Reference
+API Reference
+pydantic_ai.agent
+pydantic_ai.tools
+pydantic_ai.common_tools
+pydantic_ai.output
+pydantic_ai.result
+pydantic_ai.messages
+pydantic_ai.exceptions
+pydantic_ai.settings
+pydantic_ai.usage
+pydantic_ai.mcp
+pydantic_ai.format_as_xml
+pydantic_ai.format_prompt
+pydantic_ai.direct
+pydantic_ai.models
+pydantic_ai.models.openai
+pydantic_ai.models.anthropic
+pydantic_ai.models.bedrock
+pydantic_ai.models.cohere
+pydantic_ai.models.gemini
+pydantic_ai.models.google
+pydantic_ai.models.groq
+pydantic_ai.models.instrumented
+pydantic_ai.models.mistral
+pydantic_ai.models.test
+pydantic_ai.models.function
+pydantic_ai.models.fallback
+pydantic_ai.models.wrapper
+pydantic_ai.models.mcp_sampling
+pydantic_ai.profiles
+pydantic_ai.providers
+pydantic_graph
+pydantic_graph.nodes
+pydantic_graph.persistence
+pydantic_graph.mermaid
+pydantic_graph.exceptions
+pydantic_evals.dataset
+pydantic_evals.evaluators
+pydantic_evals.reporting
+pydantic_evals.otel
+pydantic_evals.generation
+fasta2a
+Table of contents
+Usage
+Help
+Choose a model
+Custom Agents
+Command Line Interface (CLI)
+PydanticAI
+comes with a CLI,
+clai
+(pronounced "clay") which you can use to interact with various LLMs from the command line.
+It provides a convenient way to chat with language models and quickly get answers right in the terminal.
+We originally developed this CLI for our own use, but found ourselves using it so frequently that we decided to share it as part of the PydanticAI package.
+We plan to continue adding new features, such as interaction with MCP servers, access to tools, and more.
+Usage
+You'll need to set an environment variable depending on the provider you intend to use.
+E.g. if you're using OpenAI, set the
+OPENAI_API_KEY
+environment variable:
+export
+OPENAI_API_KEY
+=
+'your-api-key-here'
+Then with
+uvx
+, run:
+uvx
+clai
+Or to install
+clai
+globally
+with
+uv
+, run:
+uv
+tool
+install
+clai
+...
+clai
+Or with
+pip
+, run:
+pip
+install
+clai
+...
+clai
+Either way, running
+clai
+will start an interactive session where you can chat with the AI model. Special commands available in interactive mode:
+/exit
+: Exit the session
+/markdown
+: Show the last response in markdown format
+/multiline
+: Toggle multiline input mode (use Ctrl+D to submit)
+Help
+To get help on the CLI, use the
+--help
+flag:
+uvx
+clai
+--help
+Choose a model
+You can specify which model to use with the
+--model
+flag:
+uvx
+clai
+--model
+anthropic:claude-3-7-sonnet-latest
+(a full list of models available can be printed with
+uvx clai --list-models
+)
+Custom Agents
+You can specify a custom agent using the
+--agent
+flag with a module path and variable name:
+custom_agent.py
+from
+pydantic_ai
+import
+Agent
+agent
+=
+Agent
+(
+'openai:gpt-4o'
+,
+instructions
+=
+'You always respond in Italian.'
+)
+Then run:
+uvx
+clai
+--agent
+custom_agent:agent
+"What's the weather today?"
+The format must be
+module:variable
+where:
+module
+is the importable Python module path
+variable
+is the name of the Agent instance in that module
+Additionally, you can directly launch CLI mode from an
+Agent
+instance using
+Agent.to_cli_sync()
+:
+agent_to_cli_sync.py
+from
+pydantic_ai
+import
+Agent
+agent
+=
+Agent
+(
+'openai:gpt-4o'
+,
+instructions
+=
+'You always respond in Italian.'
+)
+agent
+.
+to_cli_sync
+()
+You can also use the async interface with
+Agent.to_cli()
+:
+agent_to_cli.py
+from
+pydantic_ai
+import
+Agent
+agent
+=
+Agent
+(
+'openai:gpt-4o'
+,
+instructions
+=
+'You always respond in Italian.'
+)
+async
+def
+main
+():
+await
+agent
+.
+to_cli
+()
+(You'll need to add
+asyncio.run(main())
+to run
+main
+)

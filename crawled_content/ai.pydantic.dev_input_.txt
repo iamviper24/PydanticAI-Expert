@@ -1,0 +1,391 @@
+PydanticAI
+pydantic/pydantic-ai
+Introduction
+Installation
+Getting Help
+Contributing
+Troubleshooting
+Upgrade Guide
+Documentation
+Documentation
+Agents
+Models
+Models
+OpenAI
+Anthropic
+Gemini
+Google
+Bedrock
+Cohere
+Groq
+Mistral
+Dependencies
+Function Tools
+Common Tools
+Output
+Messages and chat history
+Unit testing
+Debugging and Monitoring
+Multi-agent Applications
+Graphs
+Evals
+Image, Audio, Video & Document Input
+Image, Audio, Video & Document Input
+Table of contents
+Image Input
+Audio Input
+Video Input
+Document Input
+User-side download vs. direct file URL
+Thinking
+Direct Model Requests
+MCP
+MCP
+Client
+Server
+MCP Run Python
+A2A
+Command Line Interface (CLI)
+Examples
+Examples
+Pydantic Model
+Weather agent
+Bank support
+SQL Generation
+Flight booking
+RAG
+Stream markdown
+Stream whales
+Chat App with FastAPI
+Question Graph
+Slack Lead Qualifier with Modal
+API Reference
+API Reference
+pydantic_ai.agent
+pydantic_ai.tools
+pydantic_ai.common_tools
+pydantic_ai.output
+pydantic_ai.result
+pydantic_ai.messages
+pydantic_ai.exceptions
+pydantic_ai.settings
+pydantic_ai.usage
+pydantic_ai.mcp
+pydantic_ai.format_as_xml
+pydantic_ai.format_prompt
+pydantic_ai.direct
+pydantic_ai.models
+pydantic_ai.models.openai
+pydantic_ai.models.anthropic
+pydantic_ai.models.bedrock
+pydantic_ai.models.cohere
+pydantic_ai.models.gemini
+pydantic_ai.models.google
+pydantic_ai.models.groq
+pydantic_ai.models.instrumented
+pydantic_ai.models.mistral
+pydantic_ai.models.test
+pydantic_ai.models.function
+pydantic_ai.models.fallback
+pydantic_ai.models.wrapper
+pydantic_ai.models.mcp_sampling
+pydantic_ai.profiles
+pydantic_ai.providers
+pydantic_graph
+pydantic_graph.nodes
+pydantic_graph.persistence
+pydantic_graph.mermaid
+pydantic_graph.exceptions
+pydantic_evals.dataset
+pydantic_evals.evaluators
+pydantic_evals.reporting
+pydantic_evals.otel
+pydantic_evals.generation
+fasta2a
+Table of contents
+Image Input
+Audio Input
+Video Input
+Document Input
+User-side download vs. direct file URL
+Image, Audio, Video & Document Input
+Some LLMs are now capable of understanding audio, video, image and document content.
+Image Input
+Info
+Some models do not support image input. Please check the model's documentation to confirm whether it supports image input.
+If you have a direct URL for the image, you can use
+ImageUrl
+:
+image_input.py
+from
+pydantic_ai
+import
+Agent
+,
+ImageUrl
+agent
+=
+Agent
+(
+model
+=
+'openai:gpt-4o'
+)
+result
+=
+agent
+.
+run_sync
+(
+[
+'What company is this logo from?'
+,
+ImageUrl
+(
+url
+=
+'https://iili.io/3Hs4FMg.png'
+),
+]
+)
+print
+(
+result
+.
+output
+)
+# > This is the logo for Pydantic, a data validation and settings management library in Python.
+If you have the image locally, you can also use
+BinaryContent
+:
+local_image_input.py
+import
+httpx
+from
+pydantic_ai
+import
+Agent
+,
+BinaryContent
+image_response
+=
+httpx
+.
+get
+(
+'https://iili.io/3Hs4FMg.png'
+)
+# Pydantic logo
+agent
+=
+Agent
+(
+model
+=
+'openai:gpt-4o'
+)
+result
+=
+agent
+.
+run_sync
+(
+[
+'What company is this logo from?'
+,
+BinaryContent
+(
+data
+=
+image_response
+.
+content
+,
+media_type
+=
+'image/png'
+),
+# (1)!
+]
+)
+print
+(
+result
+.
+output
+)
+# > This is the logo for Pydantic, a data validation and settings management library in Python.
+To ensure the example is runnable we download this image from the web, but you can also use
+Path().read_bytes()
+to read a local file's contents.
+Audio Input
+Info
+Some models do not support audio input. Please check the model's documentation to confirm whether it supports audio input.
+You can provide audio input using either
+AudioUrl
+or
+BinaryContent
+. The process is analogous to the examples above.
+Video Input
+Info
+Some models do not support video input. Please check the model's documentation to confirm whether it supports video input.
+You can provide video input using either
+VideoUrl
+or
+BinaryContent
+. The process is analogous to the examples above.
+Document Input
+Info
+Some models do not support document input. Please check the model's documentation to confirm whether it supports document input.
+You can provide document input using either
+DocumentUrl
+or
+BinaryContent
+. The process is similar to the examples above.
+If you have a direct URL for the document, you can use
+DocumentUrl
+:
+document_input.py
+from
+pydantic_ai
+import
+Agent
+,
+DocumentUrl
+agent
+=
+Agent
+(
+model
+=
+'anthropic:claude-3-sonnet'
+)
+result
+=
+agent
+.
+run_sync
+(
+[
+'What is the main content of this document?'
+,
+DocumentUrl
+(
+url
+=
+'https://storage.googleapis.com/cloud-samples-data/generative-ai/pdf/2403.05530.pdf'
+),
+]
+)
+print
+(
+result
+.
+output
+)
+# > This document is the technical report introducing Gemini 1.5, Google's latest large language model...
+The supported document formats vary by model.
+You can also use
+BinaryContent
+to pass document data directly:
+binary_content_input.py
+from
+pathlib
+import
+Path
+from
+pydantic_ai
+import
+Agent
+,
+BinaryContent
+pdf_path
+=
+Path
+(
+'document.pdf'
+)
+agent
+=
+Agent
+(
+model
+=
+'anthropic:claude-3-sonnet'
+)
+result
+=
+agent
+.
+run_sync
+(
+[
+'What is the main content of this document?'
+,
+BinaryContent
+(
+data
+=
+pdf_path
+.
+read_bytes
+(),
+media_type
+=
+'application/pdf'
+),
+]
+)
+print
+(
+result
+.
+output
+)
+# > The document discusses...
+User-side download vs. direct file URL
+As a general rule, when you provide a URL using any of
+ImageUrl
+,
+AudioUrl
+,
+VideoUrl
+or
+DocumentUrl
+, PydanticAI downloads the file content and then sends it as part of the API request.
+The situation is different for certain models:
+AnthropicModel
+: if you provide a PDF document via
+DocumentUrl
+, the URL is sent directly in the API request, so no download happens on the user side.
+GeminiModel
+and
+GoogleModel
+on Vertex AI: any URL provided using
+ImageUrl
+,
+AudioUrl
+,
+VideoUrl
+, or
+DocumentUrl
+is sent as-is in the API request and no data is downloaded beforehand.
+See the
+Gemini API docs for Vertex AI
+to learn more about supported URLs, formats and limitations:
+Cloud Storage bucket URIs (with protocol
+gs://
+)
+Public HTTP(S) URLs
+Public YouTube video URL (maximum one URL per request)
+However, because of crawling restrictions, it may happen that Gemini can't access certain URLs. In that case, you can instruct PydanticAI to download the file content and send that instead of the URL by setting the boolean flag
+force_download
+to
+True
+. This attribute is available on all objects that inherit from
+FileUrl
+.
+GeminiModel
+and
+GoogleModel
+on GLA: YouTube video URLs are sent directly in the request to the model.

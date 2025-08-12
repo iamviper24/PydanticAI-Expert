@@ -1,0 +1,256 @@
+PydanticAI
+pydantic/pydantic-ai
+Introduction
+Installation
+Getting Help
+Contributing
+Troubleshooting
+Upgrade Guide
+Documentation
+Documentation
+Agents
+Models
+Models
+OpenAI
+Anthropic
+Gemini
+Google
+Bedrock
+Cohere
+Groq
+Mistral
+Dependencies
+Function Tools
+Common Tools
+Output
+Messages and chat history
+Unit testing
+Debugging and Monitoring
+Multi-agent Applications
+Graphs
+Evals
+Image, Audio, Video & Document Input
+Thinking
+Direct Model Requests
+MCP
+MCP
+Client
+Server
+MCP Run Python
+A2A
+A2A
+Table of contents
+FastA2A
+Design
+Installation
+PydanticAI Agent to A2A Server
+Command Line Interface (CLI)
+Examples
+Examples
+Pydantic Model
+Weather agent
+Bank support
+SQL Generation
+Flight booking
+RAG
+Stream markdown
+Stream whales
+Chat App with FastAPI
+Question Graph
+Slack Lead Qualifier with Modal
+API Reference
+API Reference
+pydantic_ai.agent
+pydantic_ai.tools
+pydantic_ai.common_tools
+pydantic_ai.output
+pydantic_ai.result
+pydantic_ai.messages
+pydantic_ai.exceptions
+pydantic_ai.settings
+pydantic_ai.usage
+pydantic_ai.mcp
+pydantic_ai.format_as_xml
+pydantic_ai.format_prompt
+pydantic_ai.direct
+pydantic_ai.models
+pydantic_ai.models.openai
+pydantic_ai.models.anthropic
+pydantic_ai.models.bedrock
+pydantic_ai.models.cohere
+pydantic_ai.models.gemini
+pydantic_ai.models.google
+pydantic_ai.models.groq
+pydantic_ai.models.instrumented
+pydantic_ai.models.mistral
+pydantic_ai.models.test
+pydantic_ai.models.function
+pydantic_ai.models.fallback
+pydantic_ai.models.wrapper
+pydantic_ai.models.mcp_sampling
+pydantic_ai.profiles
+pydantic_ai.providers
+pydantic_graph
+pydantic_graph.nodes
+pydantic_graph.persistence
+pydantic_graph.mermaid
+pydantic_graph.exceptions
+pydantic_evals.dataset
+pydantic_evals.evaluators
+pydantic_evals.reporting
+pydantic_evals.otel
+pydantic_evals.generation
+fasta2a
+Table of contents
+FastA2A
+Design
+Installation
+PydanticAI Agent to A2A Server
+Agent2Agent (A2A) Protocol
+The
+Agent2Agent (A2A) Protocol
+is an open standard introduced by Google that enables
+communication and interoperability between AI agents, regardless of the framework or vendor they are built on.
+At Pydantic, we built the
+FastA2A
+library to make it easier to implement the A2A protocol in Python.
+We also built a convenience method that expose PydanticAI agents as A2A servers - let's have a quick look at how to use it:
+agent_to_a2a.py
+from
+pydantic_ai
+import
+Agent
+agent
+=
+Agent
+(
+'openai:gpt-4.1'
+,
+instructions
+=
+'Be fun!'
+)
+app
+=
+agent
+.
+to_a2a
+()
+You can run the example with
+uvicorn agent_to_a2a:app --host 0.0.0.0 --port 8000
+This will expose the agent as an A2A server, and you can start sending requests to it.
+See more about
+exposing PydanticAI agents as A2A servers
+.
+FastA2A
+FastA2A
+is an agentic framework agnostic implementation of the A2A protocol in Python.
+The library is designed to be used with any agentic framework, and is
+not exclusive to PydanticAI
+.
+Design
+FastA2A
+is built on top of
+Starlette
+, which means it's fully compatible with any ASGI server.
+Given the nature of the A2A protocol, it's important to understand the design before using it, as a developer
+you'll need to provide some components:
+Storage
+: to save and load tasks
+Broker
+: to schedule tasks
+Worker
+: to execute tasks
+Let's have a look at how those components fit together:
+flowchart TB
+    Server["HTTP Server"] <--> |Sends Requests/<br>Receives Results| TM
+
+    subgraph CC[Core Components]
+        direction RL
+        TM["TaskManager<br>(coordinates)"] --> |Schedules Tasks| Broker
+        TM <--> Storage
+        Broker["Broker<br>(queues & schedules)"] <--> Storage["Storage<br>(persistence)"]
+        Broker --> |Delegates Execution| Worker
+    end
+
+    Worker["Worker<br>(implementation)"]
+FastA2A allows you to bring your own
+Storage
+,
+Broker
+and
+Worker
+.
+Installation
+FastA2A is available on PyPI as
+fasta2a
+so installation is as simple as:
+pip
+uv
+pip
+install
+fasta2a
+uv
+add
+fasta2a
+The only dependencies are:
+starlette
+: to expose the A2A server as an
+ASGI application
+pydantic
+: to validate the request/response messages
+opentelemetry-api
+: to provide tracing capabilities
+You can install PydanticAI with the
+a2a
+extra to include
+FastA2A
+:
+pip
+uv
+pip
+install
+'pydantic-ai-slim[a2a]'
+uv
+add
+'pydantic-ai-slim[a2a]'
+PydanticAI Agent to A2A Server
+To expose a PydanticAI agent as an A2A server, you can use the
+to_a2a
+method:
+agent_to_a2a.py
+from
+pydantic_ai
+import
+Agent
+agent
+=
+Agent
+(
+'openai:gpt-4.1'
+,
+instructions
+=
+'Be fun!'
+)
+app
+=
+agent
+.
+to_a2a
+()
+Since
+app
+is an ASGI application, it can be used with any ASGI server.
+uvicorn
+agent_to_a2a:app
+--host
+0
+.0.0.0
+--port
+8000
+Since the goal of
+to_a2a
+is to be a convenience method, it accepts the same arguments as the
+FastA2A
+constructor.

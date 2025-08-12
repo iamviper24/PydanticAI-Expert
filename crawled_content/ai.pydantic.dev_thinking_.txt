@@ -1,0 +1,337 @@
+PydanticAI
+pydantic/pydantic-ai
+Introduction
+Installation
+Getting Help
+Contributing
+Troubleshooting
+Upgrade Guide
+Documentation
+Documentation
+Agents
+Models
+Models
+OpenAI
+Anthropic
+Gemini
+Google
+Bedrock
+Cohere
+Groq
+Mistral
+Dependencies
+Function Tools
+Common Tools
+Output
+Messages and chat history
+Unit testing
+Debugging and Monitoring
+Multi-agent Applications
+Graphs
+Evals
+Image, Audio, Video & Document Input
+Thinking
+Thinking
+Table of contents
+OpenAI
+Anthropic
+Groq
+Google
+Mistral / Cohere
+Direct Model Requests
+MCP
+MCP
+Client
+Server
+MCP Run Python
+A2A
+Command Line Interface (CLI)
+Examples
+Examples
+Pydantic Model
+Weather agent
+Bank support
+SQL Generation
+Flight booking
+RAG
+Stream markdown
+Stream whales
+Chat App with FastAPI
+Question Graph
+Slack Lead Qualifier with Modal
+API Reference
+API Reference
+pydantic_ai.agent
+pydantic_ai.tools
+pydantic_ai.common_tools
+pydantic_ai.output
+pydantic_ai.result
+pydantic_ai.messages
+pydantic_ai.exceptions
+pydantic_ai.settings
+pydantic_ai.usage
+pydantic_ai.mcp
+pydantic_ai.format_as_xml
+pydantic_ai.format_prompt
+pydantic_ai.direct
+pydantic_ai.models
+pydantic_ai.models.openai
+pydantic_ai.models.anthropic
+pydantic_ai.models.bedrock
+pydantic_ai.models.cohere
+pydantic_ai.models.gemini
+pydantic_ai.models.google
+pydantic_ai.models.groq
+pydantic_ai.models.instrumented
+pydantic_ai.models.mistral
+pydantic_ai.models.test
+pydantic_ai.models.function
+pydantic_ai.models.fallback
+pydantic_ai.models.wrapper
+pydantic_ai.models.mcp_sampling
+pydantic_ai.profiles
+pydantic_ai.providers
+pydantic_graph
+pydantic_graph.nodes
+pydantic_graph.persistence
+pydantic_graph.mermaid
+pydantic_graph.exceptions
+pydantic_evals.dataset
+pydantic_evals.evaluators
+pydantic_evals.reporting
+pydantic_evals.otel
+pydantic_evals.generation
+fasta2a
+Table of contents
+OpenAI
+Anthropic
+Groq
+Google
+Mistral / Cohere
+Thinking
+Thinking (or reasoning) is the process by which a model works through a problem step-by-step before
+providing its final answer.
+This capability is typically disabled by default and depends on the specific model being used.
+See the sections below for how to enable thinking for each provider.
+Internally, if the model doesn't provide thinking objects, PydanticAI will convert thinking blocks
+(
+"<think>..."</think>"
+) in provider-specific text parts to
+ThinkingPart
+s. We have also made
+the decision not to send
+ThinkingPart
+s back to the provider in multi-turn conversations -
+this helps save costs for users. In the future, we plan to add a setting to customize this behavior.
+OpenAI
+When using the
+OpenAIModel
+, thinking objects are not created
+by default. However, the text content may contain
+"<think>"
+tags. When this happens, PydanticAI will
+convert them to
+ThinkingPart
+objects.
+In contrast, the
+OpenAIResponsesModel
+does
+generate thinking parts. To enable this functionality, you need to set the
+openai_reasoning_effort
+and
+openai_reasoning_summary
+fields in the
+OpenAIResponsesModelSettings
+.
+openai_thinking_part.py
+from
+pydantic_ai
+import
+Agent
+from
+pydantic_ai.models.openai
+import
+OpenAIResponsesModel
+,
+OpenAIResponsesModelSettings
+model
+=
+OpenAIResponsesModel
+(
+'o3-mini'
+)
+settings
+=
+OpenAIResponsesModelSettings
+(
+openai_reasoning_effort
+=
+'low'
+,
+openai_reasoning_summary
+=
+'detailed'
+,
+)
+agent
+=
+Agent
+(
+model
+,
+model_settings
+=
+settings
+)
+...
+Anthropic
+Unlike other providers, Anthropic includes a signature in the thinking part. This signature is used to
+ensure that the thinking part has not been tampered with. To enable thinking, use the
+anthropic_thinking
+field in the
+AnthropicModelSettings
+.
+anthropic_thinking_part.py
+from
+pydantic_ai
+import
+Agent
+from
+pydantic_ai.models.anthropic
+import
+AnthropicModel
+,
+AnthropicModelSettings
+model
+=
+AnthropicModel
+(
+'claude-3-7-sonnet-latest'
+)
+settings
+=
+AnthropicModelSettings
+(
+anthropic_thinking
+=
+{
+'type'
+:
+'enabled'
+,
+'budget_tokens'
+:
+1024
+},
+)
+agent
+=
+Agent
+(
+model
+,
+model_settings
+=
+settings
+)
+...
+Groq
+Groq supports different formats to receive thinking parts:
+"raw"
+: The thinking part is included in the text content with the
+"<think>"
+tag.
+"hidden"
+: The thinking part is not included in the text content.
+"parsed"
+: The thinking part has its own
+ThinkingPart
+object.
+To enable thinking, use the
+groq_reasoning_format
+field in the
+GroqModelSettings
+:
+groq_thinking_part.py
+from
+pydantic_ai
+import
+Agent
+from
+pydantic_ai.models.groq
+import
+GroqModel
+,
+GroqModelSettings
+model
+=
+GroqModel
+(
+'qwen-qwq-32b'
+)
+settings
+=
+GroqModelSettings
+(
+groq_reasoning_format
+=
+'parsed'
+)
+agent
+=
+Agent
+(
+model
+,
+model_settings
+=
+settings
+)
+...
+Google
+To enable thinking, use the
+google_thinking_config
+field in the
+GoogleModelSettings
+.
+google_thinking_part.py
+from
+pydantic_ai
+import
+Agent
+from
+pydantic_ai.models.google
+import
+GoogleModel
+,
+GoogleModelSettings
+model
+=
+GoogleModel
+(
+'gemini-2.5-pro-preview-03-25'
+)
+settings
+=
+GoogleModelSettings
+(
+google_thinking_config
+=
+{
+'include_thoughts'
+:
+True
+})
+agent
+=
+Agent
+(
+model
+,
+model_settings
+=
+settings
+)
+...
+Mistral / Cohere
+Neither Mistral nor Cohere generate thinking parts.

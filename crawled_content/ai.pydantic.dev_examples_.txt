@@ -1,0 +1,200 @@
+PydanticAI
+pydantic/pydantic-ai
+Introduction
+Installation
+Getting Help
+Contributing
+Troubleshooting
+Upgrade Guide
+Documentation
+Documentation
+Agents
+Models
+Models
+OpenAI
+Anthropic
+Gemini
+Google
+Bedrock
+Cohere
+Groq
+Mistral
+Dependencies
+Function Tools
+Common Tools
+Output
+Messages and chat history
+Unit testing
+Debugging and Monitoring
+Multi-agent Applications
+Graphs
+Evals
+Image, Audio, Video & Document Input
+Thinking
+Direct Model Requests
+MCP
+MCP
+Client
+Server
+MCP Run Python
+A2A
+Command Line Interface (CLI)
+Examples
+Examples
+Pydantic Model
+Weather agent
+Bank support
+SQL Generation
+Flight booking
+RAG
+Stream markdown
+Stream whales
+Chat App with FastAPI
+Question Graph
+Slack Lead Qualifier with Modal
+API Reference
+API Reference
+pydantic_ai.agent
+pydantic_ai.tools
+pydantic_ai.common_tools
+pydantic_ai.output
+pydantic_ai.result
+pydantic_ai.messages
+pydantic_ai.exceptions
+pydantic_ai.settings
+pydantic_ai.usage
+pydantic_ai.mcp
+pydantic_ai.format_as_xml
+pydantic_ai.format_prompt
+pydantic_ai.direct
+pydantic_ai.models
+pydantic_ai.models.openai
+pydantic_ai.models.anthropic
+pydantic_ai.models.bedrock
+pydantic_ai.models.cohere
+pydantic_ai.models.gemini
+pydantic_ai.models.google
+pydantic_ai.models.groq
+pydantic_ai.models.instrumented
+pydantic_ai.models.mistral
+pydantic_ai.models.test
+pydantic_ai.models.function
+pydantic_ai.models.fallback
+pydantic_ai.models.wrapper
+pydantic_ai.models.mcp_sampling
+pydantic_ai.profiles
+pydantic_ai.providers
+pydantic_graph
+pydantic_graph.nodes
+pydantic_graph.persistence
+pydantic_graph.mermaid
+pydantic_graph.exceptions
+pydantic_evals.dataset
+pydantic_evals.evaluators
+pydantic_evals.reporting
+pydantic_evals.otel
+pydantic_evals.generation
+fasta2a
+Table of contents
+Usage
+Installing required dependencies
+Setting model environment variables
+Running Examples
+Examples
+Examples of how to use PydanticAI and what it can do.
+Usage
+These examples are distributed with
+pydantic-ai
+so you can run them either by cloning the
+pydantic-ai repo
+or by simply installing
+pydantic-ai
+from PyPI with
+pip
+or
+uv
+.
+Installing required dependencies
+Either way you'll need to install extra dependencies to run some examples, you just need to install the
+examples
+optional dependency group.
+If you've installed
+pydantic-ai
+via pip/uv, you can install the extra dependencies with:
+pip
+uv
+pip
+install
+"pydantic-ai[examples]"
+uv
+add
+"pydantic-ai[examples]"
+If you clone the repo, you should instead use
+uv sync --extra examples
+to install extra dependencies.
+Setting model environment variables
+These examples will need you to set up authentication with one or more of the LLMs, see the
+model configuration
+docs for details on how to do this.
+TL;DR: in most cases you'll need to set one of the following environment variables:
+OpenAI
+Google Gemini
+export
+OPENAI_API_KEY
+=
+your-api-key
+export
+GEMINI_API_KEY
+=
+your-api-key
+Running Examples
+To run the examples (this will work whether you installed
+pydantic_ai
+, or cloned the repo), run:
+pip
+uv
+python
+-m
+pydantic_ai_examples.<example_module_name>
+uv
+run
+-m
+pydantic_ai_examples.<example_module_name>
+For examples, to run the very simple
+pydantic_model
+example:
+pip
+uv
+python
+-m
+pydantic_ai_examples.pydantic_model
+uv
+run
+-m
+pydantic_ai_examples.pydantic_model
+If you like one-liners and you're using uv, you can run a pydantic-ai example with zero setup:
+OPENAI_API_KEY
+=
+'your-api-key'
+\
+uv
+run
+--with
+"pydantic-ai[examples]"
+\
+-m
+pydantic_ai_examples.pydantic_model
+You'll probably want to edit examples in addition to just running them. You can copy the examples to a new directory with:
+pip
+uv
+python
+-m
+pydantic_ai_examples
+--copy-to
+examples/
+uv
+run
+-m
+pydantic_ai_examples
+--copy-to
+examples/

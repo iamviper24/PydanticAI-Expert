@@ -1,0 +1,280 @@
+PydanticAI
+pydantic/pydantic-ai
+Introduction
+Installation
+Getting Help
+Contributing
+Troubleshooting
+Upgrade Guide
+Documentation
+Documentation
+Agents
+Models
+Models
+OpenAI
+Anthropic
+Gemini
+Google
+Bedrock
+Cohere
+Groq
+Mistral
+Dependencies
+Function Tools
+Common Tools
+Output
+Messages and chat history
+Unit testing
+Debugging and Monitoring
+Multi-agent Applications
+Graphs
+Evals
+Image, Audio, Video & Document Input
+Thinking
+Direct Model Requests
+MCP
+MCP
+Client
+Server
+MCP Run Python
+A2A
+Command Line Interface (CLI)
+Examples
+Examples
+Pydantic Model
+Weather agent
+Bank support
+SQL Generation
+Flight booking
+RAG
+Stream markdown
+Stream whales
+Chat App with FastAPI
+Question Graph
+Slack Lead Qualifier with Modal
+API Reference
+API Reference
+pydantic_ai.agent
+pydantic_ai.tools
+pydantic_ai.common_tools
+pydantic_ai.common_tools
+Table of contents
+duckduckgo
+duckduckgo_search_tool
+tavily
+tavily_search_tool
+pydantic_ai.output
+pydantic_ai.result
+pydantic_ai.messages
+pydantic_ai.exceptions
+pydantic_ai.settings
+pydantic_ai.usage
+pydantic_ai.mcp
+pydantic_ai.format_as_xml
+pydantic_ai.format_prompt
+pydantic_ai.direct
+pydantic_ai.models
+pydantic_ai.models.openai
+pydantic_ai.models.anthropic
+pydantic_ai.models.bedrock
+pydantic_ai.models.cohere
+pydantic_ai.models.gemini
+pydantic_ai.models.google
+pydantic_ai.models.groq
+pydantic_ai.models.instrumented
+pydantic_ai.models.mistral
+pydantic_ai.models.test
+pydantic_ai.models.function
+pydantic_ai.models.fallback
+pydantic_ai.models.wrapper
+pydantic_ai.models.mcp_sampling
+pydantic_ai.profiles
+pydantic_ai.providers
+pydantic_graph
+pydantic_graph.nodes
+pydantic_graph.persistence
+pydantic_graph.mermaid
+pydantic_graph.exceptions
+pydantic_evals.dataset
+pydantic_evals.evaluators
+pydantic_evals.reporting
+pydantic_evals.otel
+pydantic_evals.generation
+fasta2a
+Table of contents
+duckduckgo
+duckduckgo_search_tool
+tavily
+tavily_search_tool
+pydantic_ai.common_tools
+duckduckgo_search_tool
+duckduckgo_search_tool
+(
+duckduckgo_client
+:
+DDGS
+|
+None
+=
+None
+,
+max_results
+:
+int
+|
+None
+=
+None
+,
+)
+Creates a DuckDuckGo search tool.
+Parameters:
+Name
+Type
+Description
+Default
+duckduckgo_client
+DDGS
+| None
+The DuckDuckGo search client.
+None
+max_results
+int
+| None
+The maximum number of results. If None, returns results only from the first response.
+None
+Source code in
+pydantic_ai_slim/pydantic_ai/common_tools/duckduckgo.py
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+def
+duckduckgo_search_tool
+(
+duckduckgo_client
+:
+DDGS
+|
+None
+=
+None
+,
+max_results
+:
+int
+|
+None
+=
+None
+):
+"""Creates a DuckDuckGo search tool.
+Args:
+duckduckgo_client: The DuckDuckGo search client.
+max_results: The maximum number of results. If None, returns results only from the first response.
+"""
+return
+Tool
+(
+DuckDuckGoSearchTool
+(
+client
+=
+duckduckgo_client
+or
+DDGS
+(),
+max_results
+=
+max_results
+)
+.
+__call__
+,
+name
+=
+'duckduckgo_search'
+,
+description
+=
+'Searches DuckDuckGo for the given query and returns the results.'
+,
+)
+tavily_search_tool
+tavily_search_tool
+(
+api_key
+:
+str
+)
+Creates a Tavily search tool.
+Parameters:
+Name
+Type
+Description
+Default
+api_key
+str
+The Tavily API key.
+You can get one by signing up at
+https://app.tavily.com/home
+.
+required
+Source code in
+pydantic_ai_slim/pydantic_ai/common_tools/tavily.py
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+def
+tavily_search_tool
+(
+api_key
+:
+str
+):
+"""Creates a Tavily search tool.
+Args:
+api_key: The Tavily API key.
+You can get one by signing up at [https://app.tavily.com/home](https://app.tavily.com/home).
+"""
+return
+Tool
+(
+TavilySearchTool
+(
+client
+=
+AsyncTavilyClient
+(
+api_key
+))
+.
+__call__
+,
+name
+=
+'tavily_search'
+,
+description
+=
+'Searches Tavily for the given query and returns the results.'
+,
+)

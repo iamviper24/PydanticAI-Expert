@@ -1,0 +1,521 @@
+PydanticAI
+pydantic/pydantic-ai
+Introduction
+Installation
+Getting Help
+Contributing
+Troubleshooting
+Upgrade Guide
+Documentation
+Documentation
+Agents
+Models
+Models
+OpenAI
+Anthropic
+Gemini
+Google
+Bedrock
+Cohere
+Groq
+Mistral
+Dependencies
+Function Tools
+Common Tools
+Output
+Messages and chat history
+Unit testing
+Debugging and Monitoring
+Multi-agent Applications
+Graphs
+Evals
+Image, Audio, Video & Document Input
+Thinking
+Direct Model Requests
+MCP
+MCP
+Client
+Server
+MCP Run Python
+A2A
+Command Line Interface (CLI)
+Examples
+Examples
+Pydantic Model
+Weather agent
+Bank support
+SQL Generation
+Flight booking
+RAG
+Stream markdown
+Stream whales
+Chat App with FastAPI
+Question Graph
+Slack Lead Qualifier with Modal
+API Reference
+API Reference
+pydantic_ai.agent
+pydantic_ai.tools
+pydantic_ai.common_tools
+pydantic_ai.output
+pydantic_ai.result
+pydantic_ai.messages
+pydantic_ai.exceptions
+pydantic_ai.settings
+pydantic_ai.usage
+pydantic_ai.mcp
+pydantic_ai.format_as_xml
+pydantic_ai.format_prompt
+pydantic_ai.direct
+pydantic_ai.models
+pydantic_ai.models.openai
+pydantic_ai.models.anthropic
+pydantic_ai.models.bedrock
+pydantic_ai.models.cohere
+pydantic_ai.models.gemini
+pydantic_ai.models.google
+pydantic_ai.models.groq
+pydantic_ai.models.instrumented
+pydantic_ai.models.mistral
+pydantic_ai.models.test
+pydantic_ai.models.function
+pydantic_ai.models.fallback
+pydantic_ai.models.wrapper
+pydantic_ai.models.mcp_sampling
+pydantic_ai.profiles
+pydantic_ai.providers
+pydantic_graph
+pydantic_graph.nodes
+pydantic_graph.persistence
+pydantic_graph.mermaid
+pydantic_graph.exceptions
+pydantic_evals.dataset
+pydantic_evals.evaluators
+pydantic_evals.reporting
+pydantic_evals.otel
+pydantic_evals.generation
+pydantic_evals.generation
+Table of contents
+generation
+generate_dataset
+fasta2a
+Table of contents
+generation
+generate_dataset
+pydantic_evals.generation
+Utilities for generating example datasets for pydantic_evals.
+This module provides functions for generating sample datasets for testing and examples,
+using LLMs to create realistic test data with proper structure.
+generate_dataset
+async
+generate_dataset
+(
+*
+,
+dataset_type
+:
+type
+[
+Dataset
+[
+InputsT
+,
+OutputT
+,
+MetadataT
+]
+],
+path
+:
+Path
+|
+str
+|
+None
+=
+None
+,
+custom_evaluator_types
+:
+Sequence
+[
+type
+[
+Evaluator
+[
+InputsT
+,
+OutputT
+,
+MetadataT
+]]
+]
+=
+(),
+model
+:
+Model
+|
+KnownModelName
+=
+"openai:gpt-4o"
+,
+n_examples
+:
+int
+=
+3
+,
+extra_instructions
+:
+str
+|
+None
+=
+None
+)
+->
+Dataset
+[
+InputsT
+,
+OutputT
+,
+MetadataT
+]
+Use an LLM to generate a dataset of test cases, each consisting of input, expected output, and metadata.
+This function creates a properly structured dataset with the specified input, output, and metadata types.
+It uses an LLM to attempt to generate realistic test cases that conform to the types' schemas.
+Parameters:
+Name
+Type
+Description
+Default
+path
+Path
+|
+str
+| None
+Optional path to save the generated dataset. If provided, the dataset will be saved to this location.
+None
+dataset_type
+type
+[
+Dataset
+[
+InputsT
+,
+OutputT
+,
+MetadataT
+]]
+The type of dataset to generate, with the desired input, output, and metadata types.
+required
+custom_evaluator_types
+Sequence
+[
+type
+[
+Evaluator
+[
+InputsT
+,
+OutputT
+,
+MetadataT
+]]]
+Optional sequence of custom evaluator classes to include in the schema.
+()
+model
+Model
+|
+KnownModelName
+The PydanticAI model to use for generation. Defaults to 'gpt-4o'.
+'openai:gpt-4o'
+n_examples
+int
+Number of examples to generate. Defaults to 3.
+3
+extra_instructions
+str
+| None
+Optional additional instructions to provide to the LLM.
+None
+Returns:
+Type
+Description
+Dataset
+[
+InputsT
+,
+OutputT
+,
+MetadataT
+]
+A properly structured Dataset object with generated test cases.
+Raises:
+Type
+Description
+ValidationError
+If the LLM's response cannot be parsed as a valid dataset.
+Source code in
+pydantic_evals/pydantic_evals/generation.py
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+async
+def
+generate_dataset
+(
+*
+,
+dataset_type
+:
+type
+[
+Dataset
+[
+InputsT
+,
+OutputT
+,
+MetadataT
+]],
+path
+:
+Path
+|
+str
+|
+None
+=
+None
+,
+custom_evaluator_types
+:
+Sequence
+[
+type
+[
+Evaluator
+[
+InputsT
+,
+OutputT
+,
+MetadataT
+]]]
+=
+(),
+model
+:
+models
+.
+Model
+|
+models
+.
+KnownModelName
+=
+'openai:gpt-4o'
+,
+n_examples
+:
+int
+=
+3
+,
+extra_instructions
+:
+str
+|
+None
+=
+None
+,
+)
+->
+Dataset
+[
+InputsT
+,
+OutputT
+,
+MetadataT
+]:
+"""Use an LLM to generate a dataset of test cases, each consisting of input, expected output, and metadata.
+This function creates a properly structured dataset with the specified input, output, and metadata types.
+It uses an LLM to attempt to generate realistic test cases that conform to the types' schemas.
+Args:
+path: Optional path to save the generated dataset. If provided, the dataset will be saved to this location.
+dataset_type: The type of dataset to generate, with the desired input, output, and metadata types.
+custom_evaluator_types: Optional sequence of custom evaluator classes to include in the schema.
+model: The PydanticAI model to use for generation. Defaults to 'gpt-4o'.
+n_examples: Number of examples to generate. Defaults to 3.
+extra_instructions: Optional additional instructions to provide to the LLM.
+Returns:
+A properly structured Dataset object with generated test cases.
+Raises:
+ValidationError: If the LLM's response cannot be parsed as a valid dataset.
+"""
+output_schema
+=
+dataset_type
+.
+model_json_schema_with_evaluators
+(
+custom_evaluator_types
+)
+# TODO(DavidM): Update this once we add better response_format and/or ResultTool support to PydanticAI
+agent
+=
+Agent
+(
+model
+,
+system_prompt
+=
+(
+f
+'Generate an object that is in compliance with this JSON schema:
+\n
+{
+output_schema
+}
+\n\n
+'
+f
+'Include
+{
+n_examples
+}
+example cases.'
+' You must not include any characters in your response before the opening { of the JSON object, or after the closing }.'
+),
+output_type
+=
+str
+,
+retries
+=
+1
+,
+)
+result
+=
+await
+agent
+.
+run
+(
+extra_instructions
+or
+'Please generate the object.'
+)
+try
+:
+result
+=
+dataset_type
+.
+from_text
+(
+result
+.
+output
+,
+fmt
+=
+'json'
+,
+custom_evaluator_types
+=
+custom_evaluator_types
+)
+except
+ValidationError
+as
+e
+:
+# pragma: no cover
+print
+(
+f
+'Raw response from model:
+\n
+{
+result
+.
+output
+}
+'
+)
+raise
+e
+if
+path
+is
+not
+None
+:
+result
+.
+to_file
+(
+path
+,
+custom_evaluator_types
+=
+custom_evaluator_types
+)
+# pragma: no cover
+return
+result

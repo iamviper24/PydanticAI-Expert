@@ -1,0 +1,146 @@
+PydanticAI
+pydantic/pydantic-ai
+Introduction
+Installation
+Getting Help
+Contributing
+Troubleshooting
+Troubleshooting
+Table of contents
+Jupyter Notebook Errors
+RuntimeError: This event loop is already running
+API Key Configuration
+UserError: API key must be provided or set in the [MODEL]_API_KEY environment variable
+Monitoring HTTPX Requests
+Upgrade Guide
+Documentation
+Documentation
+Agents
+Models
+Models
+OpenAI
+Anthropic
+Gemini
+Google
+Bedrock
+Cohere
+Groq
+Mistral
+Dependencies
+Function Tools
+Common Tools
+Output
+Messages and chat history
+Unit testing
+Debugging and Monitoring
+Multi-agent Applications
+Graphs
+Evals
+Image, Audio, Video & Document Input
+Thinking
+Direct Model Requests
+MCP
+MCP
+Client
+Server
+MCP Run Python
+A2A
+Command Line Interface (CLI)
+Examples
+Examples
+Pydantic Model
+Weather agent
+Bank support
+SQL Generation
+Flight booking
+RAG
+Stream markdown
+Stream whales
+Chat App with FastAPI
+Question Graph
+Slack Lead Qualifier with Modal
+API Reference
+API Reference
+pydantic_ai.agent
+pydantic_ai.tools
+pydantic_ai.common_tools
+pydantic_ai.output
+pydantic_ai.result
+pydantic_ai.messages
+pydantic_ai.exceptions
+pydantic_ai.settings
+pydantic_ai.usage
+pydantic_ai.mcp
+pydantic_ai.format_as_xml
+pydantic_ai.format_prompt
+pydantic_ai.direct
+pydantic_ai.models
+pydantic_ai.models.openai
+pydantic_ai.models.anthropic
+pydantic_ai.models.bedrock
+pydantic_ai.models.cohere
+pydantic_ai.models.gemini
+pydantic_ai.models.google
+pydantic_ai.models.groq
+pydantic_ai.models.instrumented
+pydantic_ai.models.mistral
+pydantic_ai.models.test
+pydantic_ai.models.function
+pydantic_ai.models.fallback
+pydantic_ai.models.wrapper
+pydantic_ai.models.mcp_sampling
+pydantic_ai.profiles
+pydantic_ai.providers
+pydantic_graph
+pydantic_graph.nodes
+pydantic_graph.persistence
+pydantic_graph.mermaid
+pydantic_graph.exceptions
+pydantic_evals.dataset
+pydantic_evals.evaluators
+pydantic_evals.reporting
+pydantic_evals.otel
+pydantic_evals.generation
+fasta2a
+Table of contents
+Jupyter Notebook Errors
+RuntimeError: This event loop is already running
+API Key Configuration
+UserError: API key must be provided or set in the [MODEL]_API_KEY environment variable
+Monitoring HTTPX Requests
+Troubleshooting
+Below are suggestions on how to fix some common errors you might encounter while using PydanticAI. If the issue you're experiencing is not listed below or addressed in the documentation, please feel free to ask in the
+Pydantic Slack
+or create an issue on
+GitHub
+.
+Jupyter Notebook Errors
+RuntimeError: This event loop is already running
+This error is caused by conflicts between the event loops in Jupyter notebook and PydanticAI's. One way to manage these conflicts is by using
+nest-asyncio
+. Namely, before you execute any agent runs, do the following:
+import
+nest_asyncio
+nest_asyncio
+.
+apply
+()
+Note: This fix also applies to Google Colab and
+Marimo
+.
+API Key Configuration
+UserError: API key must be provided or set in the [MODEL]_API_KEY environment variable
+If you're running into issues with setting the API key for your model, visit the
+Models
+page to learn more about how to set an environment variable and/or pass in an
+api_key
+argument.
+Monitoring HTTPX Requests
+You can use custom
+httpx
+clients in your models in order to access specific requests, responses, and headers at runtime.
+It's particularly helpful to use
+logfire
+'s
+HTTPX integration
+to monitor the above.

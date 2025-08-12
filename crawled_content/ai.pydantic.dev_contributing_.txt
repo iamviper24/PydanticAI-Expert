@@ -1,0 +1,184 @@
+PydanticAI
+pydantic/pydantic-ai
+Introduction
+Installation
+Getting Help
+Contributing
+Contributing
+Table of contents
+Installation and Setup
+Running Tests etc.
+Documentation Changes
+Rules for adding new models to PydanticAI
+Troubleshooting
+Upgrade Guide
+Documentation
+Documentation
+Agents
+Models
+Models
+OpenAI
+Anthropic
+Gemini
+Google
+Bedrock
+Cohere
+Groq
+Mistral
+Dependencies
+Function Tools
+Common Tools
+Output
+Messages and chat history
+Unit testing
+Debugging and Monitoring
+Multi-agent Applications
+Graphs
+Evals
+Image, Audio, Video & Document Input
+Thinking
+Direct Model Requests
+MCP
+MCP
+Client
+Server
+MCP Run Python
+A2A
+Command Line Interface (CLI)
+Examples
+Examples
+Pydantic Model
+Weather agent
+Bank support
+SQL Generation
+Flight booking
+RAG
+Stream markdown
+Stream whales
+Chat App with FastAPI
+Question Graph
+Slack Lead Qualifier with Modal
+API Reference
+API Reference
+pydantic_ai.agent
+pydantic_ai.tools
+pydantic_ai.common_tools
+pydantic_ai.output
+pydantic_ai.result
+pydantic_ai.messages
+pydantic_ai.exceptions
+pydantic_ai.settings
+pydantic_ai.usage
+pydantic_ai.mcp
+pydantic_ai.format_as_xml
+pydantic_ai.format_prompt
+pydantic_ai.direct
+pydantic_ai.models
+pydantic_ai.models.openai
+pydantic_ai.models.anthropic
+pydantic_ai.models.bedrock
+pydantic_ai.models.cohere
+pydantic_ai.models.gemini
+pydantic_ai.models.google
+pydantic_ai.models.groq
+pydantic_ai.models.instrumented
+pydantic_ai.models.mistral
+pydantic_ai.models.test
+pydantic_ai.models.function
+pydantic_ai.models.fallback
+pydantic_ai.models.wrapper
+pydantic_ai.models.mcp_sampling
+pydantic_ai.profiles
+pydantic_ai.providers
+pydantic_graph
+pydantic_graph.nodes
+pydantic_graph.persistence
+pydantic_graph.mermaid
+pydantic_graph.exceptions
+pydantic_evals.dataset
+pydantic_evals.evaluators
+pydantic_evals.reporting
+pydantic_evals.otel
+pydantic_evals.generation
+fasta2a
+Table of contents
+Installation and Setup
+Running Tests etc.
+Documentation Changes
+Rules for adding new models to PydanticAI
+Contributing
+We'd love you to contribute to PydanticAI!
+Installation and Setup
+Clone your fork and cd into the repo directory
+git
+clone
+git@github.com:<your
+username>/pydantic-ai.git
+cd
+pydantic-ai
+Install
+uv
+(version 0.4.30 or later),
+pre-commit
+and
+deno
+:
+uv
+install docs
+pre-commit
+install docs
+deno
+install docs
+To install
+pre-commit
+you can run the following command:
+uv
+tool
+install
+pre-commit
+For
+deno
+, you can run the following, or check
+their documentation
+for alternative
+installation methods:
+curl
+-fsSL
+https://deno.land/install.sh
+|
+sh
+Install
+pydantic-ai
+, all dependencies and pre-commit hooks
+make
+install
+Running Tests etc.
+We use
+make
+to manage most commands you'll need to run.
+For details on available commands, run:
+make
+help
+To run code formatting, linting, static type checks, and tests with coverage report generation, run:
+make
+Documentation Changes
+To run the documentation page locally, run:
+uv
+run
+mkdocs
+serve
+Rules for adding new models to PydanticAI
+To avoid an excessive workload for the maintainers of PydanticAI, we can't accept all model contributions, so we're setting the following rules for when we'll accept new models and when we won't. This should hopefully reduce the chances of disappointment and wasted work.
+To add a new model with an extra dependency, that dependency needs > 500k monthly downloads from PyPI consistently over 3 months or more
+To add a new model which uses another models logic internally and has no extra dependencies, that model's GitHub org needs > 20k stars in total
+For any other model that's just a custom URL and API key, we're happy to add a one-paragraph description with a link and instructions on the URL to use
+For any other model that requires more logic, we recommend you release your own Python package
+pydantic-ai-xxx
+, which depends on
+pydantic-ai-slim
+and implements a model that inherits from our
+Model
+ABC
+If you're unsure about adding a model, please
+create an issue
+.

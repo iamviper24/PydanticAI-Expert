@@ -1,0 +1,358 @@
+PydanticAI
+pydantic/pydantic-ai
+Introduction
+Installation
+Getting Help
+Contributing
+Troubleshooting
+Upgrade Guide
+Documentation
+Documentation
+Agents
+Models
+Models
+OpenAI
+Anthropic
+Gemini
+Google
+Bedrock
+Bedrock
+Table of contents
+Install
+Configuration
+Environment variables
+Customizing Bedrock Runtime API
+provider argument
+Cohere
+Groq
+Mistral
+Dependencies
+Function Tools
+Common Tools
+Output
+Messages and chat history
+Unit testing
+Debugging and Monitoring
+Multi-agent Applications
+Graphs
+Evals
+Image, Audio, Video & Document Input
+Thinking
+Direct Model Requests
+MCP
+MCP
+Client
+Server
+MCP Run Python
+A2A
+Command Line Interface (CLI)
+Examples
+Examples
+Pydantic Model
+Weather agent
+Bank support
+SQL Generation
+Flight booking
+RAG
+Stream markdown
+Stream whales
+Chat App with FastAPI
+Question Graph
+Slack Lead Qualifier with Modal
+API Reference
+API Reference
+pydantic_ai.agent
+pydantic_ai.tools
+pydantic_ai.common_tools
+pydantic_ai.output
+pydantic_ai.result
+pydantic_ai.messages
+pydantic_ai.exceptions
+pydantic_ai.settings
+pydantic_ai.usage
+pydantic_ai.mcp
+pydantic_ai.format_as_xml
+pydantic_ai.format_prompt
+pydantic_ai.direct
+pydantic_ai.models
+pydantic_ai.models.openai
+pydantic_ai.models.anthropic
+pydantic_ai.models.bedrock
+pydantic_ai.models.cohere
+pydantic_ai.models.gemini
+pydantic_ai.models.google
+pydantic_ai.models.groq
+pydantic_ai.models.instrumented
+pydantic_ai.models.mistral
+pydantic_ai.models.test
+pydantic_ai.models.function
+pydantic_ai.models.fallback
+pydantic_ai.models.wrapper
+pydantic_ai.models.mcp_sampling
+pydantic_ai.profiles
+pydantic_ai.providers
+pydantic_graph
+pydantic_graph.nodes
+pydantic_graph.persistence
+pydantic_graph.mermaid
+pydantic_graph.exceptions
+pydantic_evals.dataset
+pydantic_evals.evaluators
+pydantic_evals.reporting
+pydantic_evals.otel
+pydantic_evals.generation
+fasta2a
+Table of contents
+Install
+Configuration
+Environment variables
+Customizing Bedrock Runtime API
+provider argument
+Bedrock
+Install
+To use
+BedrockConverseModel
+, you need to either install
+pydantic-ai
+, or install
+pydantic-ai-slim
+with the
+bedrock
+optional group:
+pip
+uv
+pip
+install
+"pydantic-ai-slim[bedrock]"
+uv
+add
+"pydantic-ai-slim[bedrock]"
+Configuration
+To use
+AWS Bedrock
+, you'll need an AWS account with Bedrock enabled and appropriate credentials. You can use either AWS credentials directly or a pre-configured boto3 client.
+BedrockModelName
+contains a list of available Bedrock models, including models from Anthropic, Amazon, Cohere, Meta, and Mistral.
+Environment variables
+You can set your AWS credentials as environment variables (
+among other options
+):
+export
+AWS_ACCESS_KEY_ID
+=
+'your-access-key'
+export
+AWS_SECRET_ACCESS_KEY
+=
+'your-secret-key'
+export
+AWS_DEFAULT_REGION
+=
+'us-east-1'
+# or your preferred region
+You can then use
+BedrockConverseModel
+by name:
+from
+pydantic_ai
+import
+Agent
+agent
+=
+Agent
+(
+'bedrock:anthropic.claude-3-sonnet-20240229-v1:0'
+)
+...
+Or initialize the model directly with just the model name:
+from
+pydantic_ai
+import
+Agent
+from
+pydantic_ai.models.bedrock
+import
+BedrockConverseModel
+model
+=
+BedrockConverseModel
+(
+'anthropic.claude-3-sonnet-20240229-v1:0'
+)
+agent
+=
+Agent
+(
+model
+)
+...
+Customizing Bedrock Runtime API
+You can customize the Bedrock Runtime API calls by adding additional parameters, such as
+guardrail
+configurations
+and
+performance settings
+. For a complete list of configurable parameters, refer to the
+documentation for
+BedrockModelSettings
+.
+customize_bedrock_model_settings.py
+from
+pydantic_ai
+import
+Agent
+from
+pydantic_ai.models.bedrock
+import
+BedrockConverseModel
+,
+BedrockModelSettings
+# Define Bedrock model settings with guardrail and performance configurations
+bedrock_model_settings
+=
+BedrockModelSettings
+(
+bedrock_guardrail_config
+=
+{
+'guardrailIdentifier'
+:
+'v1'
+,
+'guardrailVersion'
+:
+'v1'
+,
+'trace'
+:
+'enabled'
+},
+bedrock_performance_configuration
+=
+{
+'latency'
+:
+'optimized'
+}
+)
+model
+=
+BedrockConverseModel
+(
+model_name
+=
+'us.amazon.nova-pro-v1:0'
+)
+agent
+=
+Agent
+(
+model
+=
+model
+,
+model_settings
+=
+bedrock_model_settings
+)
+provider
+argument
+You can provide a custom
+BedrockProvider
+via the
+provider
+argument. This is useful when you want to specify credentials directly or use a custom boto3 client:
+from
+pydantic_ai
+import
+Agent
+from
+pydantic_ai.models.bedrock
+import
+BedrockConverseModel
+from
+pydantic_ai.providers.bedrock
+import
+BedrockProvider
+# Using AWS credentials directly
+model
+=
+BedrockConverseModel
+(
+'anthropic.claude-3-sonnet-20240229-v1:0'
+,
+provider
+=
+BedrockProvider
+(
+region_name
+=
+'us-east-1'
+,
+aws_access_key_id
+=
+'your-access-key'
+,
+aws_secret_access_key
+=
+'your-secret-key'
+,
+),
+)
+agent
+=
+Agent
+(
+model
+)
+...
+You can also pass a pre-configured boto3 client:
+import
+boto3
+from
+pydantic_ai
+import
+Agent
+from
+pydantic_ai.models.bedrock
+import
+BedrockConverseModel
+from
+pydantic_ai.providers.bedrock
+import
+BedrockProvider
+# Using a pre-configured boto3 client
+bedrock_client
+=
+boto3
+.
+client
+(
+'bedrock-runtime'
+,
+region_name
+=
+'us-east-1'
+)
+model
+=
+BedrockConverseModel
+(
+'anthropic.claude-3-sonnet-20240229-v1:0'
+,
+provider
+=
+BedrockProvider
+(
+bedrock_client
+=
+bedrock_client
+),
+)
+agent
+=
+Agent
+(
+model
+)
+...

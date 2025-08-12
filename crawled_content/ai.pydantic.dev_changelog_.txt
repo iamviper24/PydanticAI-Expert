@@ -1,0 +1,196 @@
+PydanticAI
+pydantic/pydantic-ai
+Introduction
+Installation
+Getting Help
+Contributing
+Troubleshooting
+Upgrade Guide
+Upgrade Guide
+Table of contents
+Breaking Changes
+v0.4.0 (2025-07-08)
+v0.3.0 (2025-06-18)
+v0.2.0 (2025-05-12)
+v0.1.0 (2025-04-15)
+Full Changelog
+Documentation
+Documentation
+Agents
+Models
+Models
+OpenAI
+Anthropic
+Gemini
+Google
+Bedrock
+Cohere
+Groq
+Mistral
+Dependencies
+Function Tools
+Common Tools
+Output
+Messages and chat history
+Unit testing
+Debugging and Monitoring
+Multi-agent Applications
+Graphs
+Evals
+Image, Audio, Video & Document Input
+Thinking
+Direct Model Requests
+MCP
+MCP
+Client
+Server
+MCP Run Python
+A2A
+Command Line Interface (CLI)
+Examples
+Examples
+Pydantic Model
+Weather agent
+Bank support
+SQL Generation
+Flight booking
+RAG
+Stream markdown
+Stream whales
+Chat App with FastAPI
+Question Graph
+Slack Lead Qualifier with Modal
+API Reference
+API Reference
+pydantic_ai.agent
+pydantic_ai.tools
+pydantic_ai.common_tools
+pydantic_ai.output
+pydantic_ai.result
+pydantic_ai.messages
+pydantic_ai.exceptions
+pydantic_ai.settings
+pydantic_ai.usage
+pydantic_ai.mcp
+pydantic_ai.format_as_xml
+pydantic_ai.format_prompt
+pydantic_ai.direct
+pydantic_ai.models
+pydantic_ai.models.openai
+pydantic_ai.models.anthropic
+pydantic_ai.models.bedrock
+pydantic_ai.models.cohere
+pydantic_ai.models.gemini
+pydantic_ai.models.google
+pydantic_ai.models.groq
+pydantic_ai.models.instrumented
+pydantic_ai.models.mistral
+pydantic_ai.models.test
+pydantic_ai.models.function
+pydantic_ai.models.fallback
+pydantic_ai.models.wrapper
+pydantic_ai.models.mcp_sampling
+pydantic_ai.profiles
+pydantic_ai.providers
+pydantic_graph
+pydantic_graph.nodes
+pydantic_graph.persistence
+pydantic_graph.mermaid
+pydantic_graph.exceptions
+pydantic_evals.dataset
+pydantic_evals.evaluators
+pydantic_evals.reporting
+pydantic_evals.otel
+pydantic_evals.generation
+fasta2a
+Table of contents
+Breaking Changes
+v0.4.0 (2025-07-08)
+v0.3.0 (2025-06-18)
+v0.2.0 (2025-05-12)
+v0.1.0 (2025-04-15)
+Full Changelog
+Upgrade Guide
+PydanticAI is still pre-version 1, so breaking changes will occur, however:
+We try to minimize them as much as possible.
+We use minor version bumps to signify breaking changes.
+Wherever possible we deprecate old features so code continues to work with deprecation warnings when changing the public API.
+We intend to release V1 in summer 2025, and then follow strict semantic versioning, e.g. no intentional breaking changes except in minor or patch versions.
+Breaking Changes
+Note
+Here's a filtered list of the breaking changes for each version to help you upgrade PydanticAI.
+v0.4.0 (2025-07-08)
+See
+#1799
+- Pydantic Evals
+EvaluationReport
+and
+ReportCase
+are now generic dataclasses instead of Pydantic models. If you were serializing them using
+model_dump()
+, you will now need to use the
+EvaluationReportAdapter
+and
+ReportCaseAdapter
+type adapters instead.
+See
+#1507
+- The
+ToolDefinition
+description
+argument is now optional and the order of positional arguments has changed from
+name, description, parameters_json_schema, ...
+to
+name, parameters_json_schema, description, ...
+to account for this.
+v0.3.0 (2025-06-18)
+See
+#1142
+— Adds support for thinking parts.
+We now convert the thinking blocks (
+"<think>..."</think>"
+) in provider specific text parts to
+PydanticAI
+ThinkingPart
+s. Also, as part of this release, we made the choice to not send back the
+ThinkingPart
+s to the provider - the idea is to save costs on behalf of the user. In the future, we
+intend to add a setting to customize this behavior.
+v0.2.0 (2025-05-12)
+See
+#1647
+— usage makes sense as part of
+ModelResponse
+, and could be really useful in "messages" (really a sequence of requests and response). In this PR:
+Adds
+usage
+to
+ModelResponse
+(field has a default factory of
+Usage()
+so it'll work to load data that doesn't have usage)
+changes the return type of
+Model.request
+to just
+ModelResponse
+instead of
+tuple[ModelResponse, Usage]
+v0.1.0 (2025-04-15)
+See
+#1248
+— the attribute/parameter name
+result
+was renamed to
+output
+in many places. Hopefully all changes keep a deprecated attribute or parameter with the old name, so you should get many deprecation warnings.
+See
+#1484
+—
+format_as_xml
+was moved and made available to import from the package root, e.g.
+from pydantic_ai import format_as_xml
+.
+Full Changelog
+For the full changelog, see
+GitHub Releases
+.

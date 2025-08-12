@@ -1,0 +1,1291 @@
+PydanticAI
+pydantic/pydantic-ai
+Introduction
+Installation
+Getting Help
+Contributing
+Troubleshooting
+Upgrade Guide
+Documentation
+Documentation
+Agents
+Models
+Models
+OpenAI
+Anthropic
+Gemini
+Google
+Bedrock
+Cohere
+Groq
+Mistral
+Dependencies
+Function Tools
+Common Tools
+Output
+Messages and chat history
+Unit testing
+Debugging and Monitoring
+Multi-agent Applications
+Graphs
+Evals
+Image, Audio, Video & Document Input
+Thinking
+Direct Model Requests
+MCP
+MCP
+Client
+Server
+MCP Run Python
+A2A
+Command Line Interface (CLI)
+Examples
+Examples
+Pydantic Model
+Weather agent
+Bank support
+SQL Generation
+Flight booking
+RAG
+Stream markdown
+Stream whales
+Chat App with FastAPI
+Question Graph
+Slack Lead Qualifier with Modal
+API Reference
+API Reference
+pydantic_ai.agent
+pydantic_ai.tools
+pydantic_ai.common_tools
+pydantic_ai.output
+pydantic_ai.output
+Table of contents
+output
+OutputDataT
+ToolOutput
+output
+name
+description
+max_retries
+strict
+NativeOutput
+outputs
+name
+description
+strict
+PromptedOutput
+outputs
+name
+description
+template
+TextOutput
+output_function
+pydantic_ai.result
+pydantic_ai.messages
+pydantic_ai.exceptions
+pydantic_ai.settings
+pydantic_ai.usage
+pydantic_ai.mcp
+pydantic_ai.format_as_xml
+pydantic_ai.format_prompt
+pydantic_ai.direct
+pydantic_ai.models
+pydantic_ai.models.openai
+pydantic_ai.models.anthropic
+pydantic_ai.models.bedrock
+pydantic_ai.models.cohere
+pydantic_ai.models.gemini
+pydantic_ai.models.google
+pydantic_ai.models.groq
+pydantic_ai.models.instrumented
+pydantic_ai.models.mistral
+pydantic_ai.models.test
+pydantic_ai.models.function
+pydantic_ai.models.fallback
+pydantic_ai.models.wrapper
+pydantic_ai.models.mcp_sampling
+pydantic_ai.profiles
+pydantic_ai.providers
+pydantic_graph
+pydantic_graph.nodes
+pydantic_graph.persistence
+pydantic_graph.mermaid
+pydantic_graph.exceptions
+pydantic_evals.dataset
+pydantic_evals.evaluators
+pydantic_evals.reporting
+pydantic_evals.otel
+pydantic_evals.generation
+fasta2a
+Table of contents
+output
+OutputDataT
+ToolOutput
+output
+name
+description
+max_retries
+strict
+NativeOutput
+outputs
+name
+description
+strict
+PromptedOutput
+outputs
+name
+description
+template
+TextOutput
+output_function
+pydantic_ai.output
+OutputDataT
+module-attribute
+OutputDataT
+=
+TypeVar
+(
+"OutputDataT"
+,
+default
+=
+str
+,
+covariant
+=
+True
+)
+Covariant type variable for the output data type of a run.
+ToolOutput
+dataclass
+Bases:
+Generic
+[
+OutputDataT
+]
+Marker class to use a tool for output and optionally customize the tool.
+Example:
+tool_output.py
+from
+pydantic
+import
+BaseModel
+from
+pydantic_ai
+import
+Agent
+,
+ToolOutput
+class
+Fruit
+(
+BaseModel
+):
+name
+:
+str
+color
+:
+str
+class
+Vehicle
+(
+BaseModel
+):
+name
+:
+str
+wheels
+:
+int
+agent
+=
+Agent
+(
+'openai:gpt-4o'
+,
+output_type
+=
+[
+ToolOutput
+(
+Fruit
+,
+name
+=
+'return_fruit'
+),
+ToolOutput
+(
+Vehicle
+,
+name
+=
+'return_vehicle'
+),
+],
+)
+result
+=
+agent
+.
+run_sync
+(
+'What is a banana?'
+)
+print
+(
+repr
+(
+result
+.
+output
+))
+#> Fruit(name='banana', color='yellow')
+Source code in
+pydantic_ai_slim/pydantic_ai/output.py
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+@dataclass
+(
+init
+=
+False
+)
+class
+ToolOutput
+(
+Generic
+[
+OutputDataT
+]):
+"""Marker class to use a tool for output and optionally customize the tool.
+Example:
+```python {title="tool_output.py"}
+from pydantic import BaseModel
+from pydantic_ai import Agent, ToolOutput
+class Fruit(BaseModel):
+name: str
+color: str
+class Vehicle(BaseModel):
+name: str
+wheels: int
+agent = Agent(
+'openai:gpt-4o',
+output_type=[
+ToolOutput(Fruit, name='return_fruit'),
+ToolOutput(Vehicle, name='return_vehicle'),
+],
+)
+result = agent.run_sync('What is a banana?')
+print(repr(result.output))
+#> Fruit(name='banana', color='yellow')
+```
+"""
+output
+:
+OutputTypeOrFunction
+[
+OutputDataT
+]
+"""An output type or function."""
+name
+:
+str
+|
+None
+"""The name of the tool that will be passed to the model. If not specified and only one output is provided, `final_result` will be used. If multiple outputs are provided, the name of the output type or function will be added to the tool name."""
+description
+:
+str
+|
+None
+"""The description of the tool that will be passed to the model. If not specified, the docstring of the output type or function will be used."""
+max_retries
+:
+int
+|
+None
+"""The maximum number of retries for the tool."""
+strict
+:
+bool
+|
+None
+"""Whether to use strict mode for the tool."""
+def
+__init__
+(
+self
+,
+type_
+:
+OutputTypeOrFunction
+[
+OutputDataT
+],
+*
+,
+name
+:
+str
+|
+None
+=
+None
+,
+description
+:
+str
+|
+None
+=
+None
+,
+max_retries
+:
+int
+|
+None
+=
+None
+,
+strict
+:
+bool
+|
+None
+=
+None
+,
+):
+self
+.
+output
+=
+type_
+self
+.
+name
+=
+name
+self
+.
+description
+=
+description
+self
+.
+max_retries
+=
+max_retries
+self
+.
+strict
+=
+strict
+output
+instance-attribute
+output
+:
+OutputTypeOrFunction
+[
+OutputDataT
+]
+=
+type_
+An output type or function.
+name
+instance-attribute
+name
+:
+str
+|
+None
+=
+name
+The name of the tool that will be passed to the model. If not specified and only one output is provided,
+final_result
+will be used. If multiple outputs are provided, the name of the output type or function will be added to the tool name.
+description
+instance-attribute
+description
+:
+str
+|
+None
+=
+description
+The description of the tool that will be passed to the model. If not specified, the docstring of the output type or function will be used.
+max_retries
+instance-attribute
+max_retries
+:
+int
+|
+None
+=
+max_retries
+The maximum number of retries for the tool.
+strict
+instance-attribute
+strict
+:
+bool
+|
+None
+=
+strict
+Whether to use strict mode for the tool.
+NativeOutput
+dataclass
+Bases:
+Generic
+[
+OutputDataT
+]
+Marker class to use the model's native structured outputs functionality for outputs and optionally customize the name and description.
+Example:
+native_output.py
+from
+tool_output
+import
+Fruit
+,
+Vehicle
+from
+pydantic_ai
+import
+Agent
+,
+NativeOutput
+agent
+=
+Agent
+(
+'openai:gpt-4o'
+,
+output_type
+=
+NativeOutput
+(
+[
+Fruit
+,
+Vehicle
+],
+name
+=
+'Fruit or vehicle'
+,
+description
+=
+'Return a fruit or vehicle.'
+),
+)
+result
+=
+agent
+.
+run_sync
+(
+'What is a Ford Explorer?'
+)
+print
+(
+repr
+(
+result
+.
+output
+))
+#> Vehicle(name='Ford Explorer', wheels=4)
+Source code in
+pydantic_ai_slim/pydantic_ai/output.py
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+@dataclass
+(
+init
+=
+False
+)
+class
+NativeOutput
+(
+Generic
+[
+OutputDataT
+]):
+"""Marker class to use the model's native structured outputs functionality for outputs and optionally customize the name and description.
+Example:
+```python {title="native_output.py" requires="tool_output.py"}
+from tool_output import Fruit, Vehicle
+from pydantic_ai import Agent, NativeOutput
+agent = Agent(
+'openai:gpt-4o',
+output_type=NativeOutput(
+[Fruit, Vehicle],
+name='Fruit or vehicle',
+description='Return a fruit or vehicle.'
+),
+)
+result = agent.run_sync('What is a Ford Explorer?')
+print(repr(result.output))
+#> Vehicle(name='Ford Explorer', wheels=4)
+```
+"""
+outputs
+:
+OutputTypeOrFunction
+[
+OutputDataT
+]
+|
+Sequence
+[
+OutputTypeOrFunction
+[
+OutputDataT
+]]
+"""The output types or functions."""
+name
+:
+str
+|
+None
+"""The name of the structured output that will be passed to the model. If not specified and only one output is provided, the name of the output type or function will be used."""
+description
+:
+str
+|
+None
+"""The description of the structured output that will be passed to the model. If not specified and only one output is provided, the docstring of the output type or function will be used."""
+strict
+:
+bool
+|
+None
+"""Whether to use strict mode for the output, if the model supports it."""
+def
+__init__
+(
+self
+,
+outputs
+:
+OutputTypeOrFunction
+[
+OutputDataT
+]
+|
+Sequence
+[
+OutputTypeOrFunction
+[
+OutputDataT
+]],
+*
+,
+name
+:
+str
+|
+None
+=
+None
+,
+description
+:
+str
+|
+None
+=
+None
+,
+strict
+:
+bool
+|
+None
+=
+None
+,
+):
+self
+.
+outputs
+=
+outputs
+self
+.
+name
+=
+name
+self
+.
+description
+=
+description
+self
+.
+strict
+=
+strict
+outputs
+instance-attribute
+outputs
+:
+(
+OutputTypeOrFunction
+[
+OutputDataT
+]
+|
+Sequence
+[
+OutputTypeOrFunction
+[
+OutputDataT
+]]
+)
+=
+outputs
+The output types or functions.
+name
+instance-attribute
+name
+:
+str
+|
+None
+=
+name
+The name of the structured output that will be passed to the model. If not specified and only one output is provided, the name of the output type or function will be used.
+description
+instance-attribute
+description
+:
+str
+|
+None
+=
+description
+The description of the structured output that will be passed to the model. If not specified and only one output is provided, the docstring of the output type or function will be used.
+strict
+instance-attribute
+strict
+:
+bool
+|
+None
+=
+strict
+Whether to use strict mode for the output, if the model supports it.
+PromptedOutput
+dataclass
+Bases:
+Generic
+[
+OutputDataT
+]
+Marker class to use a prompt to tell the model what to output and optionally customize the prompt.
+Example:
+prompted_output.py
+from
+pydantic
+import
+BaseModel
+from
+tool_output
+import
+Vehicle
+from
+pydantic_ai
+import
+Agent
+,
+PromptedOutput
+class
+Device
+(
+BaseModel
+):
+name
+:
+str
+kind
+:
+str
+agent
+=
+Agent
+(
+'openai:gpt-4o'
+,
+output_type
+=
+PromptedOutput
+(
+[
+Vehicle
+,
+Device
+],
+name
+=
+'Vehicle or device'
+,
+description
+=
+'Return a vehicle or device.'
+),
+)
+result
+=
+agent
+.
+run_sync
+(
+'What is a MacBook?'
+)
+print
+(
+repr
+(
+result
+.
+output
+))
+#> Device(name='MacBook', kind='laptop')
+agent
+=
+Agent
+(
+'openai:gpt-4o'
+,
+output_type
+=
+PromptedOutput
+(
+[
+Vehicle
+,
+Device
+],
+template
+=
+'Gimme some JSON:
+{schema}
+'
+),
+)
+result
+=
+agent
+.
+run_sync
+(
+'What is a Ford Explorer?'
+)
+print
+(
+repr
+(
+result
+.
+output
+))
+#> Vehicle(name='Ford Explorer', wheels=4)
+Source code in
+pydantic_ai_slim/pydantic_ai/output.py
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+@dataclass
+(
+init
+=
+False
+)
+class
+PromptedOutput
+(
+Generic
+[
+OutputDataT
+]):
+"""Marker class to use a prompt to tell the model what to output and optionally customize the prompt.
+Example:
+```python {title="prompted_output.py" requires="tool_output.py"}
+from pydantic import BaseModel
+from tool_output import Vehicle
+from pydantic_ai import Agent, PromptedOutput
+class Device(BaseModel):
+name: str
+kind: str
+agent = Agent(
+'openai:gpt-4o',
+output_type=PromptedOutput(
+[Vehicle, Device],
+name='Vehicle or device',
+description='Return a vehicle or device.'
+),
+)
+result = agent.run_sync('What is a MacBook?')
+print(repr(result.output))
+#> Device(name='MacBook', kind='laptop')
+agent = Agent(
+'openai:gpt-4o',
+output_type=PromptedOutput(
+[Vehicle, Device],
+template='Gimme some JSON: {schema}'
+),
+)
+result = agent.run_sync('What is a Ford Explorer?')
+print(repr(result.output))
+#> Vehicle(name='Ford Explorer', wheels=4)
+```
+"""
+outputs
+:
+OutputTypeOrFunction
+[
+OutputDataT
+]
+|
+Sequence
+[
+OutputTypeOrFunction
+[
+OutputDataT
+]]
+"""The output types or functions."""
+name
+:
+str
+|
+None
+"""The name of the structured output that will be passed to the model. If not specified and only one output is provided, the name of the output type or function will be used."""
+description
+:
+str
+|
+None
+"""The description that will be passed to the model. If not specified and only one output is provided, the docstring of the output type or function will be used."""
+template
+:
+str
+|
+None
+"""Template for the prompt passed to the model.
+The '{schema}' placeholder will be replaced with the output JSON schema.
+If not specified, the default template specified on the model's profile will be used.
+"""
+def
+__init__
+(
+self
+,
+outputs
+:
+OutputTypeOrFunction
+[
+OutputDataT
+]
+|
+Sequence
+[
+OutputTypeOrFunction
+[
+OutputDataT
+]],
+*
+,
+name
+:
+str
+|
+None
+=
+None
+,
+description
+:
+str
+|
+None
+=
+None
+,
+template
+:
+str
+|
+None
+=
+None
+,
+):
+self
+.
+outputs
+=
+outputs
+self
+.
+name
+=
+name
+self
+.
+description
+=
+description
+self
+.
+template
+=
+template
+outputs
+instance-attribute
+outputs
+:
+(
+OutputTypeOrFunction
+[
+OutputDataT
+]
+|
+Sequence
+[
+OutputTypeOrFunction
+[
+OutputDataT
+]]
+)
+=
+outputs
+The output types or functions.
+name
+instance-attribute
+name
+:
+str
+|
+None
+=
+name
+The name of the structured output that will be passed to the model. If not specified and only one output is provided, the name of the output type or function will be used.
+description
+instance-attribute
+description
+:
+str
+|
+None
+=
+description
+The description that will be passed to the model. If not specified and only one output is provided, the docstring of the output type or function will be used.
+template
+instance-attribute
+template
+:
+str
+|
+None
+=
+template
+Template for the prompt passed to the model.
+The '{schema}' placeholder will be replaced with the output JSON schema.
+If not specified, the default template specified on the model's profile will be used.
+TextOutput
+dataclass
+Bases:
+Generic
+[
+OutputDataT
+]
+Marker class to use text output for an output function taking a string argument.
+Example:
+from
+pydantic_ai
+import
+Agent
+,
+TextOutput
+def
+split_into_words
+(
+text
+:
+str
+)
+->
+list
+[
+str
+]:
+return
+text
+.
+split
+()
+agent
+=
+Agent
+(
+'openai:gpt-4o'
+,
+output_type
+=
+TextOutput
+(
+split_into_words
+),
+)
+result
+=
+agent
+.
+run_sync
+(
+'Who was Albert Einstein?'
+)
+print
+(
+result
+.
+output
+)
+#> ['Albert', 'Einstein', 'was', 'a', 'German-born', 'theoretical', 'physicist.']
+Source code in
+pydantic_ai_slim/pydantic_ai/output.py
+242
+243
+244
+245
+246
+247
+248
+249
+250
+251
+252
+253
+254
+255
+256
+257
+258
+259
+260
+261
+262
+263
+264
+265
+266
+@dataclass
+class
+TextOutput
+(
+Generic
+[
+OutputDataT
+]):
+"""Marker class to use text output for an output function taking a string argument.
+Example:
+```python
+from pydantic_ai import Agent, TextOutput
+def split_into_words(text: str) -> list[str]:
+return text.split()
+agent = Agent(
+'openai:gpt-4o',
+output_type=TextOutput(split_into_words),
+)
+result = agent.run_sync('Who was Albert Einstein?')
+print(result.output)
+#> ['Albert', 'Einstein', 'was', 'a', 'German-born', 'theoretical', 'physicist.']
+```
+"""
+output_function
+:
+TextOutputFunc
+[
+OutputDataT
+]
+"""The function that will be called to process the model's plain text output. The function must take a single string argument."""
+output_function
+instance-attribute
+output_function
+:
+TextOutputFunc
+[
+OutputDataT
+]
+The function that will be called to process the model's plain text output. The function must take a single string argument.

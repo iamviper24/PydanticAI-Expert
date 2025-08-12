@@ -1,0 +1,516 @@
+PydanticAI
+pydantic/pydantic-ai
+Introduction
+Installation
+Getting Help
+Contributing
+Troubleshooting
+Upgrade Guide
+Documentation
+Documentation
+Agents
+Models
+Models
+OpenAI
+Anthropic
+Gemini
+Google
+Bedrock
+Cohere
+Groq
+Mistral
+Dependencies
+Function Tools
+Common Tools
+Output
+Messages and chat history
+Unit testing
+Debugging and Monitoring
+Multi-agent Applications
+Graphs
+Evals
+Image, Audio, Video & Document Input
+Thinking
+Direct Model Requests
+MCP
+MCP
+Client
+Server
+MCP Run Python
+A2A
+Command Line Interface (CLI)
+Examples
+Examples
+Pydantic Model
+Weather agent
+Bank support
+SQL Generation
+Flight booking
+RAG
+Stream markdown
+Stream whales
+Chat App with FastAPI
+Question Graph
+Slack Lead Qualifier with Modal
+API Reference
+API Reference
+pydantic_ai.agent
+pydantic_ai.tools
+pydantic_ai.common_tools
+pydantic_ai.output
+pydantic_ai.result
+pydantic_ai.messages
+pydantic_ai.exceptions
+pydantic_ai.settings
+pydantic_ai.usage
+pydantic_ai.mcp
+pydantic_ai.format_as_xml
+pydantic_ai.format_prompt
+pydantic_ai.direct
+pydantic_ai.models
+pydantic_ai.models.openai
+pydantic_ai.models.anthropic
+pydantic_ai.models.bedrock
+pydantic_ai.models.cohere
+pydantic_ai.models.gemini
+pydantic_ai.models.google
+pydantic_ai.models.groq
+pydantic_ai.models.instrumented
+pydantic_ai.models.mistral
+pydantic_ai.models.test
+pydantic_ai.models.function
+pydantic_ai.models.fallback
+pydantic_ai.models.wrapper
+pydantic_ai.models.mcp_sampling
+pydantic_ai.profiles
+pydantic_ai.providers
+pydantic_graph
+pydantic_graph.nodes
+pydantic_graph.persistence
+pydantic_graph.mermaid
+pydantic_graph.exceptions
+pydantic_evals.dataset
+pydantic_evals.evaluators
+pydantic_evals.reporting
+pydantic_evals.otel
+pydantic_evals.generation
+fasta2a
+Table of contents
+OpenAI-compatible Providers
+Models and Providers
+Custom Models
+Fallback Model
+Model Providers
+PydanticAI is model-agnostic and has built-in support for multiple model providers:
+OpenAI
+Anthropic
+Gemini
+(via two different APIs: Generative Language API and VertexAI API)
+Groq
+Mistral
+Cohere
+Bedrock
+OpenAI-compatible Providers
+In addition, many providers are compatible with the OpenAI API, and can be used with
+OpenAIModel
+in PydanticAI:
+DeepSeek
+Grok (xAI)
+Ollama
+OpenRouter
+Perplexity
+Fireworks AI
+Together AI
+Azure AI Foundry
+Heroku
+GitHub Models
+PydanticAI also comes with
+TestModel
+and
+FunctionModel
+for testing and development.
+To use each model provider, you need to configure your local environment and make sure you have the right
+packages installed.
+Models and Providers
+PydanticAI uses a few key terms to describe how it interacts with different LLMs:
+Model
+: This refers to the PydanticAI class used to make requests following a specific LLM API
+    (generally by wrapping a vendor-provided SDK, like the
+openai
+python SDK). These classes implement a
+    vendor-SDK-agnostic API, ensuring a single PydanticAI agent is portable to different LLM vendors without
+    any other code changes just by swapping out the Model it uses. Model classes are named
+    roughly in the format
+<VendorSdk>Model
+, for example, we have
+OpenAIModel
+,
+AnthropicModel
+,
+GeminiModel
+,
+    etc. When using a Model class, you specify the actual LLM model name (e.g.,
+gpt-4o
+,
+claude-3-5-sonnet-latest
+,
+gemini-1.5-flash
+) as a parameter.
+Provider
+: This refers to provider-specific classes which handle the authentication and connections
+    to an LLM vendor. Passing a non-default
+Provider
+as a parameter to a Model is how you can ensure
+    that your agent will make requests to a specific endpoint, or make use of a specific approach to
+    authentication (e.g., you can use Vertex-specific auth with the
+GeminiModel
+by way of the
+VertexProvider
+).
+    In particular, this is how you can make use of an AI gateway, or an LLM vendor that offers API compatibility
+    with the vendor SDK used by an existing Model (such as
+OpenAIModel
+).
+Profile
+: This refers to a description of how requests to a specific model or family of models need to be
+    constructed to get the best results, independent of the model and provider classes used.
+    For example, different models have different restrictions on the JSON schemas that can be used for tools,
+    and the same schema transformer needs to be used for Gemini models whether you're using
+GoogleModel
+with model name
+gemini-2.5-pro-preview
+, or
+OpenAIModel
+with
+OpenRouterProvider
+and model name
+google/gemini-2.5-pro-preview
+.
+When you instantiate an
+Agent
+with just a name formatted as
+<provider>:<model>
+, e.g.
+openai:gpt-4o
+or
+openrouter:google/gemini-2.5-pro-preview
+,
+PydanticAI will automatically select the appropriate model class, provider, and profile.
+If you want to use a different provider or profile, you can instantiate a model class directly and pass in
+provider
+and/or
+profile
+arguments.
+Custom Models
+To implement support for a model API that's not already supported, you will need to subclass the
+Model
+abstract base class.
+For streaming, you'll also need to implement the
+StreamedResponse
+abstract base class.
+The best place to start is to review the source code for existing implementations, e.g.
+OpenAIModel
+.
+For details on when we'll accept contributions adding new models to PydanticAI, see the
+contributing guidelines
+.
+If a model API is compatible with the OpenAI API, you do not need a custom model class and can provide your own
+custom provider
+instead.
+Fallback Model
+You can use
+FallbackModel
+to attempt multiple models
+in sequence until one successfully returns a result. Under the hood, PydanticAI automatically switches
+from one model to the next if the current model returns a 4xx or 5xx status code.
+In the following example, the agent first makes a request to the OpenAI model (which fails due to an invalid API key),
+and then falls back to the Anthropic model.
+fallback_model.py
+from
+pydantic_ai
+import
+Agent
+from
+pydantic_ai.models.anthropic
+import
+AnthropicModel
+from
+pydantic_ai.models.fallback
+import
+FallbackModel
+from
+pydantic_ai.models.openai
+import
+OpenAIModel
+openai_model
+=
+OpenAIModel
+(
+'gpt-4o'
+)
+anthropic_model
+=
+AnthropicModel
+(
+'claude-3-5-sonnet-latest'
+)
+fallback_model
+=
+FallbackModel
+(
+openai_model
+,
+anthropic_model
+)
+agent
+=
+Agent
+(
+fallback_model
+)
+response
+=
+agent
+.
+run_sync
+(
+'What is the capital of France?'
+)
+print
+(
+response
+.
+data
+)
+#> Paris
+print
+(
+response
+.
+all_messages
+())
+"""
+[
+ModelRequest(
+parts=[
+UserPromptPart(
+content='What is the capital of France?',
+timestamp=datetime.datetime(...),
+part_kind='user-prompt',
+)
+],
+kind='request',
+),
+ModelResponse(
+parts=[TextPart(content='Paris', part_kind='text')],
+model_name='claude-3-5-sonnet-latest',
+timestamp=datetime.datetime(...),
+kind='response',
+vendor_id=None,
+),
+]
+"""
+The
+ModelResponse
+message above indicates in the
+model_name
+field that the output was returned by the Anthropic model, which is the second model specified in the
+FallbackModel
+.
+Note
+Each model's options should be configured individually. For example,
+base_url
+,
+api_key
+, and custom clients should be set on each model itself, not on the
+FallbackModel
+.
+In this next example, we demonstrate the exception-handling capabilities of
+FallbackModel
+.
+If all models fail, a
+FallbackExceptionGroup
+is raised, which
+contains all the exceptions encountered during the
+run
+execution.
+Python >=3.11
+Python <3.11
+fallback_model_failure.py
+from
+pydantic_ai
+import
+Agent
+from
+pydantic_ai.exceptions
+import
+ModelHTTPError
+from
+pydantic_ai.models.anthropic
+import
+AnthropicModel
+from
+pydantic_ai.models.fallback
+import
+FallbackModel
+from
+pydantic_ai.models.openai
+import
+OpenAIModel
+openai_model
+=
+OpenAIModel
+(
+'gpt-4o'
+)
+anthropic_model
+=
+AnthropicModel
+(
+'claude-3-5-sonnet-latest'
+)
+fallback_model
+=
+FallbackModel
+(
+openai_model
+,
+anthropic_model
+)
+agent
+=
+Agent
+(
+fallback_model
+)
+try
+:
+response
+=
+agent
+.
+run_sync
+(
+'What is the capital of France?'
+)
+except
+*
+ModelHTTPError
+as
+exc_group
+:
+for
+exc
+in
+exc_group
+.
+exceptions
+:
+print
+(
+exc
+)
+Since
+except*
+is only supported
+in Python 3.11+, we use the
+exceptiongroup
+backport
+package for earlier Python versions:
+fallback_model_failure.py
+from
+exceptiongroup
+import
+catch
+from
+pydantic_ai
+import
+Agent
+from
+pydantic_ai.exceptions
+import
+ModelHTTPError
+from
+pydantic_ai.models.anthropic
+import
+AnthropicModel
+from
+pydantic_ai.models.fallback
+import
+FallbackModel
+from
+pydantic_ai.models.openai
+import
+OpenAIModel
+def
+model_status_error_handler
+(
+exc_group
+:
+BaseExceptionGroup
+)
+->
+None
+:
+for
+exc
+in
+exc_group
+.
+exceptions
+:
+print
+(
+exc
+)
+openai_model
+=
+OpenAIModel
+(
+'gpt-4o'
+)
+anthropic_model
+=
+AnthropicModel
+(
+'claude-3-5-sonnet-latest'
+)
+fallback_model
+=
+FallbackModel
+(
+openai_model
+,
+anthropic_model
+)
+agent
+=
+Agent
+(
+fallback_model
+)
+with
+catch
+({
+ModelHTTPError
+:
+model_status_error_handler
+}):
+response
+=
+agent
+.
+run_sync
+(
+'What is the capital of France?'
+)
+By default, the
+FallbackModel
+only moves on to the next model if the current model raises a
+ModelHTTPError
+. You can customize this behavior by
+passing a custom
+fallback_on
+argument to the
+FallbackModel
+constructor.
